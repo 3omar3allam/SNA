@@ -1,0 +1,25 @@
+.header{
+    -fx-background-color: linear-gradient(blue,lightblue);
+    -fx-padding: 10 20;
+}
+.headerlink{
+    -fx-text-fill: lightgray;
+    -fx-border-width: 0;
+    -fx-font-size: 12;
+    -fx-font-weight: bold;
+    -fx-padding: 5;
+}
+.headerlink:hover{
+    -fx-background-color: aliceblue;
+    -fx-background-radius: 5;
+    -fx-text-fill: navy;
+    -fx-underline: false;
+}
+.login_form{
+    -fx-padding: 25;
+}
+.error_field{
+    -fx-border-color: red;
+    -fx-alignment: center;
+    -fx-border-radius: 3;
+}
