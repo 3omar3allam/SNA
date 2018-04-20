@@ -18,8 +18,24 @@
 .login_form{
     -fx-padding: 25;
 }
-.error_field{
+.login_field{
+    -fx-alignment: center
+}
+.login_error_field{
     -fx-border-color: red;
     -fx-alignment: center;
     -fx-border-radius: 3;
+}
+
+.search_form{
+    -fx-padding: 30px 15px;
+    -fx-alignment: top-center;
+    -fx-max-width: 350;
+}
+.search_results{
+    -fx-max-width: 150px;
+    -fx-max-height: 120px;
+}
+.search_field{
+
 }

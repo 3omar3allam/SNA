@@ -1,36 +1,44 @@
 package sample;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.LinkedList;
+import java.util.Queue;
 
 public class Group {
-    String Name;
-    int ID;
-    LinkedList<User> Members;
-    int noMembers;
-////////////**********Constructors**********/////////
-    public Group(String name, int ID, LinkedList<User> members, int noMembers) {
+
+    private static int currentID=0;
+    private static Queue<Integer> availableIDs;   //m3mlthash int 3shan tala3 error :D
+    // ^^ wenta btinitializeha mat3melsh = new Queue<> .. e3mel = new ArrayList<>() aw new LinkedList<>()  <allam>
+    private String Name;
+    private int ID;
+    private LinkedList<User> Members;
+    private int noMembers;
+    public static ArrayList<Group> allGroupsName,allGroupsID;
+
+    ////////////**********Constructors**********/////////
+    public Group(String name, LinkedList<User> members) {
         Name = name;
-        this.ID = ID;
+        if(!availableIDs.isEmpty())ID=availableIDs.remove();
+        else {ID=currentID; currentID++;}
         Members = members;
-        this.noMembers = noMembers;
+        this.noMembers = members.size();
     }
 
-    public Group() {
+    public Group()
+    {
         Name = null;
-        ID = -1;
+        if(!availableIDs.isEmpty())ID=availableIDs.remove();
+        else {ID=currentID; currentID++;}
         noMembers = 0;
-    }
-
-    public Group(String name, int ID) {
-        Name = name;
-        this.ID = ID;
     }
 
     public Group(String name) {
         Name = name;
-        ID=-1;
+        if(!availableIDs.isEmpty())ID=availableIDs.remove();
+        else {ID=currentID; currentID++;}
     }
+
     /////////////*******String Function used to save into csv file**********/
 
     @Override
@@ -38,11 +46,11 @@ public class Group {
         StringBuilder buffer= new StringBuilder(ID +
                 "," + Name);
         for (int i = 0; i <noMembers ; i++) {
-            buffer.append(",").append(Members.get(i).ID);
+            buffer.append(",").append(Members.get(i).getID());
         }
         return buffer.toString();
     }
-//////////////******setters and getters******////////////
+    //////////////******setters and getters******////////////
 
 
     public String getName() {
@@ -57,41 +65,36 @@ public class Group {
         return ID;
     }
 
-    public void setID(int ID) {
-        this.ID = ID;
-    }
-
     public List<User> getMembers() {
         return Members;
     }
 
     public void setMembers(LinkedList<User> members) {
-        Members = members;
+        Members = members; noMembers=members.size();
     }
 
     public int getNoMembers() {
         return noMembers;
     }
 
-    public void setNoMembers(int noMembers) {
-        this.noMembers = noMembers;
-    }
-    ///////////*********otherFunctions********///////////
     public  void addMember(User user)
     {
-
         Members.add(user);
         noMembers++;
     }
+
     public  void deleteMember(User user)
     {
-
-        Members.remove(user);
-        noMembers--;
+        if (Members.contains(user)) {
+            Members.remove(user);
+            noMembers--;
+        }
     }
+
     public  boolean isMember(User user)
     {
-      return Members.contains(user);
+        return Members.contains(user);
 
     }
+
 }
