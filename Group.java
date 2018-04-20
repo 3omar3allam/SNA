@@ -6,7 +6,7 @@ import java.util.Queue;
 
 public class Group {
 
-    private int currentID=0;
+    private static int currentID=0;
     private static Queue<Integer> availableIDs;   //m3mlthash int 3shan tala3 error :D
     private String Name;
     private int ID;
