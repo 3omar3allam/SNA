@@ -7,14 +7,14 @@ import java.util.Queue;
 
 public class Group {
 
+    public static ArrayList<Group> allGroupsID;   // Vector of all users sorted by ID
+    public static ArrayList<Group> allGroupsName;   // Vector of all users sorted by Name
     private static int currentID=0;
     private static Queue<Integer> availableIDs;   //m3mlthash int 3shan tala3 error :D
-    // ^^ wenta btinitializeha mat3melsh = new Queue<> .. e3mel = new ArrayList<>() aw new LinkedList<>()  <allam>
     private String Name;
     private int ID;
     private LinkedList<User> Members;
     private int noMembers;
-    public static ArrayList<Group> allGroupsName,allGroupsID;
 
     ////////////**********Constructors**********/////////
     public Group(String name, LinkedList<User> members) {

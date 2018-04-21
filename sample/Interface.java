@@ -308,7 +308,7 @@ public class Interface extends Application {
         }
     }
     private void createAccount(){
-
+        Registeration.display("Register");
     }
     private void login_error(VBox layout,TextField txtID){
         if(layout.getChildren().size()<4){

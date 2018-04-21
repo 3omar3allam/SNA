@@ -32,3 +32,13 @@
     -fx-alignment: top-center;
     -fx-max-width: 350;
 }
+.date-picker > .arrow-button {
+    -fx-padding: 0px;
+}
+
+.date-picker > .arrow-button > .arrow {
+    -fx-padding: 0px;
+}
+.date-picker > .date-picker-display-node {
+    -fx-background-insets: 1 1 1 1;
+}
