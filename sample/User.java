@@ -54,6 +54,14 @@ public class User {
         else {ID=currentID; currentID++;}
 
     }
+    public User(String userName, String firstName,String lastName){
+        this.userName=userName;
+        FirstName = firstName;
+        LastName = lastName;
+        noFriends=0;
+        if(!availableIDs.isEmpty())ID=availableIDs.remove();
+        else {ID=currentID; currentID++;}
+    }
 
     public User(String userName, String name) throws Exception {
         this.userName=userName;

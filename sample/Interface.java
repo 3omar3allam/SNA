@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Observer;
+import java.util.Random;
 
 import static sample.usefulFunctions.*;
 import static sample.User.*;
@@ -74,8 +75,6 @@ public class Interface extends Application {
             }
         });*/
     }
-
-
     public static void main(String[] args) {
         launch(args);
     }
@@ -92,12 +91,10 @@ public class Interface extends Application {
     private void save(){
         System.out.println("saved");
     }
-
     private void set_layout(){
         layout = new BorderPane();
         layout.setCenter(null);
     }
-
     private void set_header(){
         AnchorPane header = new AnchorPane();
         header.getStyleClass().add("header");
@@ -191,8 +188,13 @@ public class Interface extends Application {
             }
             else {
                 lst_results_user.setVisible(true);
-                for (User user : allUsersName)
-                    if (user.getName().toLowerCase().contains(newValue.toLowerCase())) matching_names.add(user);
+                for (User user : allUsersName){
+                    int length = newValue.length();
+                    if((length <= user.getFirstName().length() && user.getFirstName().toLowerCase().substring(0,length).equals(newValue.toLowerCase()))
+                    || (length <= user.getFirstName().length() && user.getLastName().toLowerCase().substring(0,length).equals(newValue.toLowerCase())))
+                        matching_names.add(user);
+                }
+
                 if(matching_names.isEmpty())lst_results_user.setVisible(false);
                 else {
                     lst_results_user.setCellFactory(e -> new ListCell<User>() {
@@ -322,26 +324,26 @@ public class Interface extends Application {
         availableIDs = new LinkedList<>();
         allGroupsID = new ArrayList<>(0);
         allGroupsName = new ArrayList<>(0);
-
-        String names[] = {
-                "omar",
-                "othman",
-                "ali",
-                "amr",
-                "mohsen",
-                "elsokary",
-                "elfollaly"
-        };
-
-        for(String name: names){
-            int index = name_index(allUsersName,0,allUsersName.size(),name);
-            allUsersName.add(index,new User(name,name.toUpperCase()+" MOHAMED"));
-        }
+        names_generator();
     }
     private void visit_profile(User profile){
 
     }
     private void visit_group(Group group){
 
+    }
+    private void names_generator() throws Exception {
+        Random rand = new Random();
+        for(int i = 0; i<100000;i++){
+            int numChar = 1 + rand.nextInt(10);
+            StringBuilder name_builder = new StringBuilder();
+            for (int j = 0; j<numChar; j++){
+                int c = 97 + rand.nextInt(25);
+                name_builder.append((char)c);
+            }
+            String name = name_builder.toString();
+            int index = name_index(allUsersName,0,allUsersName.size(), name);
+            if(index != -1)allUsersName.add(index,new User(name,name,name));
+        }
     }
 }
