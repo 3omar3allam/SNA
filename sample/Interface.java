@@ -114,7 +114,6 @@ public class Interface extends Application {
 
         layout.setTop(header);
     }
-
     private void set_home_buttons(HBox buttons){
         buttons.setSpacing(7);
         Hyperlink lnk_home = new Hyperlink("HOME");
@@ -162,7 +161,9 @@ public class Interface extends Application {
         layout.setBottom(footer);
     }
     private void set_search_field(){
-        VBox search_layout = new VBox(5);
+        GridPane search_layout = new GridPane();
+        search_layout.setVgap(10);
+        search_layout.setHgap(5);
         search_layout.getStyleClass().add("search_form");
 
         Label lbl_search_user = new Label("Find Friends");
@@ -176,18 +177,6 @@ public class Interface extends Application {
         TextField txt_search_group = new TextField();
         txt_search_group.setPromptText("Search...");
         txt_search_group.getStyleClass().add("search_field");
-
-        HBox hb_search_labels = new HBox(5),hb_search_fields = new HBox(5);
-        hb_search_labels.getChildren().addAll(lbl_search_user,new Label("                       "),lbl_search_group);
-        hb_search_fields.getChildren().addAll(txt_search_user,txt_search_group);
-
-        lbl_search_user.setMinWidth(txt_search_user.getPrefWidth());
-        lbl_search_group.setMinWidth(txt_search_group.getPrefWidth());
-        hb_search_labels.setMinWidth(hb_search_fields.getPrefWidth());
-        hb_search_labels.setAlignment(Pos.CENTER_LEFT);
-        txt_search_user.setAlignment(Pos.CENTER_LEFT);
-        hb_search_fields.setAlignment(Pos.CENTER_LEFT);
-        txt_search_group.setAlignment(Pos.CENTER_LEFT);
 
         ListView<User> lst_results_user = new ListView<>();
         lst_results_user.setVisible(false);
@@ -252,10 +241,6 @@ public class Interface extends Application {
             }
         });
 
-        HBox hb_search_results = new HBox(5);
-        hb_search_results.getChildren().addAll(lst_results_user,lst_results_group);
-        hb_search_results.setMaxWidth(hb_search_fields.getPrefWidth());
-
         lst_results_user.setOnMouseClicked( e->{
             User selected_user = lst_results_user.getSelectionModel().getSelectedItem();
             visit_profile(selected_user);
@@ -266,7 +251,14 @@ public class Interface extends Application {
             visit_group(selected_group);
         });
 
-        search_layout.getChildren().addAll(hb_search_labels,hb_search_fields,hb_search_results);
+        GridPane.setConstraints(lbl_search_user,0,0);
+        GridPane.setConstraints(lbl_search_group,1,0);
+        GridPane.setConstraints(txt_search_user,0,1);
+        GridPane.setConstraints(txt_search_group,1,1);
+        GridPane.setConstraints(lst_results_user,0,2);
+        GridPane.setConstraints(lst_results_group,1,2);
+
+        search_layout.getChildren().addAll(lbl_search_user,lbl_search_group,txt_search_user,txt_search_group,lst_results_user,lst_results_group);
         layout.setLeft(search_layout);
     }
     private void set_login_form(){
@@ -346,7 +338,6 @@ public class Interface extends Application {
             allUsersName.add(index,new User(name,name.toUpperCase()+" MOHAMED"));
         }
     }
-
     private void visit_profile(User profile){
 
     }

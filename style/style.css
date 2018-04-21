@@ -32,10 +32,3 @@
     -fx-alignment: top-center;
     -fx-max-width: 350;
 }
-.search_results{
-    -fx-max-width: 150px;
-    -fx-max-height: 120px;
-}
-.search_field{
-
-}
