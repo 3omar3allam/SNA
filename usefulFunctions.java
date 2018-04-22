@@ -5,29 +5,12 @@ import com.sun.org.apache.xpath.internal.operations.Bool;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Iterator;
-import static sample.User.*;
+
+import static sample.User.allUsersID;
+import static sample.User.allUsersName;
 
 public class usefulFunctions {
 
-    static int userIDBinarySearch(ArrayList<User> arr, int start, int end, int ID){
-        //returns the index if found, and -1 if not
-        if(start >= end) return -1;
-        int mid = (start + end - 1)/2;
-        if(ID == arr.get(mid).getID()) return mid;
-        else if(ID < arr.get(mid).getID()) return userIDBinarySearch(arr,start,mid,ID);
-        else return userIDBinarySearch(arr,mid+1,end,ID);
-    }
-
-    static int ID_index(ArrayList<User> arr, int start, int end, int ID) {
-        //returns -1 if found, or the index to add if not
-        if (start >= end) {
-            return start;
-        }
-        int mid = (start + end - 1) / 2;
-        if (ID == arr.get(mid).getID()) return -1;
-        else if (ID <= arr.get(mid).getID()) return ID_index(arr, start, mid, ID);
-        else return ID_index(arr, mid + 1, end, ID);
-    }
 
     static int userNameBinarySearch(ArrayList<User> arr, int start, int end, String name){
         if(start >= end) return -1;
@@ -48,28 +31,47 @@ public class usefulFunctions {
         else return name_index(arr, mid + 1, end, username);
     }
 
+    static int userIDBinarySearch(ArrayList<User> arr, int start, int end, int ID){
+        if(start >= end) return -1;
+        int mid = (start + end - 1)/2;
+        if(ID == arr.get(mid).getID()) return mid;
+        else if(ID < arr.get(mid).getID()) return userIDBinarySearch(arr,start,mid,ID);
+        else return userIDBinarySearch(arr,mid+1,end,ID);
+    }
 
-    static void addToList(User user)
-    {
-        String name=user.getFirstName()+" "+user.getLastName();
+    static int ID_index(ArrayList<User> arr, int start, int end, int ID) {
+        if (start >= end) {
+            return start;
+        }
+        int mid = (start + end - 1) / 2;
+        if (ID == arr.get(mid).getID()) return -1;
+        else if (ID < arr.get(mid).getID()) return ID_index(arr, start, mid, ID);
+        else return ID_index(arr, mid + 1, end, ID);
+    }
+
+    static void addToList(User user)throws Exception {
         int index;
-        index=userNameBinarySearch(allUsersName,0,allUsersName.size()-1,name);
-        if(index!=-1) allUsersName.add(index, user);
+        String username = user.getUserName();
+        index = name_index(allUsersName,0,allUsersName.size(),username);
+        if(index==-1) throw new Exception("username already taken");
         else
         {
-                index=name_index(allUsersName,0,allUsersName.size()-1,name);
-                allUsersName.add(index, user);
+            //if(username.matches("/^[A-Za-z0-9]+(?:[_][A-Za-z0-9]+)*$/")) throw new Exception("username shouldn't contain special characters");
+            allUsersName.add(index, user);
         }
         int id=user.getID();
-        index=userIDBinarySearch(allUsersID,0,allUsersID.size()-1,id);
-        if(index!=-1) allUsersID.add(index, user);
-        else
-        {
-            index=ID_index(allUsersID,0,allUsersID.size()-1,id);
-            allUsersID.add(index, user);
-        }
+        index=ID_index(allUsersID,0,allUsersID.size(),id);
+        if(index==-1); //userID duplication (impossible)
+        else allUsersID.add(index, user);
     }
 }
+
+
+
+
+
+
+
 
 
 

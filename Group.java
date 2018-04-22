@@ -1,18 +1,20 @@
 package sample;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Queue;
 
 public class Group {
 
+    public static ArrayList<Group> allGroupsID;   // Vector of all users sorted by ID
+    public static ArrayList<Group> allGroupsName;   // Vector of all users sorted by Name
     private static int currentID=0;
     private static Queue<Integer> availableIDs;   //m3mlthash int 3shan tala3 error :D
     private String Name;
     private int ID;
     private LinkedList<User> Members;
     private int noMembers;
-
 
     ////////////**********Constructors**********/////////
     public Group(String name, LinkedList<User> members) {
