@@ -42,3 +42,22 @@
 .date-picker > .date-picker-display-node {
     -fx-background-insets: 1 1 1 1;
 }
+
+.registration_form{
+    -fx-background-color: navy;
+    -fx-alignment: center;
+    -fx-padding: 30px;
+}
+.error_registration_radio > .radio{
+    -fx-background-color: palevioletred;
+}
+.error_registration_cbox{
+    -fx-background-color: palevioletred;
+}
+.error_registration_text{
+    -fx-background-color: palevioletred;
+}
+.username_taken{
+    -fx-fill: white;
+    -fx-font-weight: bold;
+}

@@ -38,20 +38,23 @@ import static sample.usefulFunctions.*;
 import static sample.User.*;
 import static sample.Group.*;
 
-public class Interface extends Application {
 
+public class Interface extends Application {
     private Stage window;
     private Scene Home,User,Group;
     private FileChooser fileChooser;
     private File data;
     private BorderPane layout;
-    private int noGroups;
     ObservableList<String> Names = FXCollections.observableArrayList();
+    private Label lbl_users;
+    private Label lbl_groups;
+    private int noUsers,noGroups;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        init_Lists();
+        noUsers = 0;
         noGroups = 0;
+        init_Lists();
         window = primaryStage;
         window.setTitle("Social-Networks");
         set_layout();
@@ -144,9 +147,9 @@ public class Interface extends Application {
         AnchorPane.setBottomAnchor(btn_import, 15.0);
 
         HBox population = new HBox(2);
-        Label lbl_users = new Label();
-        lbl_users.setText(Integer.toString(allUsersID.size()) + " users");
-        Label lbl_groups = new Label();
+        if(lbl_users == null)lbl_users = new Label();
+        lbl_users.setText(Integer.toString(noUsers) + " users");
+        if(lbl_groups == null)lbl_groups = new Label();
         lbl_groups.setText(Integer.toString(noGroups) + " groups");
         Separator sep = new Separator();
         sep.setOrientation(Orientation.VERTICAL);
@@ -308,7 +311,10 @@ public class Interface extends Application {
         }
     }
     private void createAccount(){
-        Registeration.display("Register");
+        if(Registration.display("Register")){
+            noUsers ++;
+            lbl_users.setText(Integer.toString(noUsers)+" Users");
+        }
     }
     private void login_error(VBox layout,TextField txtID){
         if(layout.getChildren().size()<4){
@@ -324,7 +330,7 @@ public class Interface extends Application {
         availableIDs = new LinkedList<>();
         allGroupsID = new ArrayList<>(0);
         allGroupsName = new ArrayList<>(0);
-        names_generator();
+        //names_generator();
     }
     private void visit_profile(User profile){
 
@@ -332,18 +338,22 @@ public class Interface extends Application {
     private void visit_group(Group group){
 
     }
-    private void names_generator() throws Exception {
+    private void names_generator() {
         Random rand = new Random();
         for(int i = 0; i<100000;i++){
-            int numChar = 1 + rand.nextInt(10);
+            int numChar = 1 + rand.nextInt(5);
             StringBuilder name_builder = new StringBuilder();
             for (int j = 0; j<numChar; j++){
                 int c = 97 + rand.nextInt(25);
                 name_builder.append((char)c);
             }
             String name = name_builder.toString();
-            int index = name_index(allUsersName,0,allUsersName.size(), name);
-            if(index != -1)allUsersName.add(index,new User(name,name,name));
+            try{
+                addToList(new User(name,name,name));
+            }catch(Exception ignored){
+
+            }
         }
+        noUsers = allUsersID.size();
     }
 }
