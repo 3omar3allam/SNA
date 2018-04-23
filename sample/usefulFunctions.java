@@ -53,12 +53,8 @@ public class usefulFunctions {
         int index;
         String username = user.getUserName();
         index = name_index(allUsersName,0,allUsersName.size(),username);
-        if(index==-1) throw new Exception("username already taken");
-        else
-        {
-            //if(username.matches("/^[A-Za-z0-9]+(?:[_][A-Za-z0-9]+)*$/")) throw new Exception("username shouldn't contain special characters");
-            allUsersName.add(index, user);
-        }
+        if(index==-1) throw new UsernameException("username already taken");
+        else allUsersName.add(index, user);
         int id=user.getID();
         index=ID_index(allUsersID,0,allUsersID.size(),id);
         if(index==-1); //userID duplication (impossible)

@@ -44,7 +44,7 @@
 }
 
 .registration_form{
-    -fx-background-color: navy;
+    -fx-background-color: linear-gradient(navy,blue,lightseagreen,lightblue,aliceblue);
     -fx-alignment: center;
     -fx-padding: 30px;
 }
@@ -57,7 +57,8 @@
 .error_registration_text{
     -fx-background-color: palevioletred;
 }
-.username_taken{
-    -fx-fill: white;
+.registration_error_label{
+    -fx-padding: 30;
+    -fx-text-fill: darkred;
     -fx-font-weight: bold;
 }

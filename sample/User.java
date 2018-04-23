@@ -35,11 +35,13 @@ public class User {
     public User(String userName,String firstName,String lastName, String gender, LocalDate birthDate)throws Exception {
         FirstName = firstName;
         LastName = lastName;
+        if(!userName.matches("[\\w]+")) throw new UsernameException("username should contain only word characters");
         UserName = userName;
-        this.noFriends = noFriends;
+        this.noFriends = 0;
         if(!availableIDs.isEmpty())ID=availableIDs.remove();
         else {ID=currentID; currentID++;}
         this.birthDate = LocalDate.of(birthDate.getYear(),birthDate.getMonth(),birthDate.getDayOfMonth());
+        if(this.getAge()<8) throw new AgeException("8 years is the minimum age allowed");
         if(gender.equals("male"))  Gender = sample.gender.male;
         else Gender = sample.gender.female;
         addToList(this); //implemented in usefulFunctions class
@@ -176,7 +178,7 @@ public class User {
     public LocalDate getBirthDate(){return birthDate;}
     public void setBirthDate(LocalDate d){birthDate=d;}
     public int getAge(){
-        return Period.between(LocalDate.now(),birthDate).getYears();
+        return Period.between(birthDate,LocalDate.now()).getYears();
     }
     ////////*********other functions***********//////////////
     public void addFriend(User user)

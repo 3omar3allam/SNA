@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -39,7 +40,7 @@ public class Registration {
         }
         months = FXCollections.observableArrayList();
         Collections.addAll(months,"January","February","March","April","May","June"
-                ,"July","August","September","Octorber","November","December");
+                ,"July","August","September","October","November","December");
         days = FXCollections.observableArrayList();
         for(int i = 1; i<= 31; i++){
             days.add(i);
@@ -47,7 +48,7 @@ public class Registration {
         final BooleanProperty firstTime = new SimpleBooleanProperty(true); // Variable to store the focus on stage load
         Stage window = new Stage();
 
-        VBox container = new VBox(60);
+        VBox container = new VBox(10);
         container.getStyleClass().add("registration_form");
 
         window.initModality(Modality.APPLICATION_MODAL);
@@ -60,7 +61,9 @@ public class Registration {
         lbl_title.setStyle("-fx-font-size: 20; -fx-font-weight: bold; -fx-alignment: center-left; -fx-fill: aliceblue");
         TextField txt_username = new TextField();
         txt_username.setPromptText("Username");
-        Text lbl_username_error = new Text();
+        Label lbl_error = new Label();
+        lbl_error.getStyleClass().add("registration_error_label");
+        lbl_error.setAlignment(Pos.CENTER);
 
         TextField txt_fname = new TextField();
         txt_fname.setPromptText("First name");
@@ -107,12 +110,13 @@ public class Registration {
         });
         GridPane.setConstraints(lbl_title,0,0,2,1);
         GridPane.setConstraints(txt_username,0,1);
-        GridPane.setConstraints(lbl_username_error,1,1);
         GridPane.setConstraints(txt_fname,0,2);
         GridPane.setConstraints(txt_lname,1,2);
         GridPane.setConstraints(hb_gender,0,3,2,1);
         GridPane.setConstraints(hb_date,0,4,2,1);
-        grid.getChildren().addAll(lbl_title,txt_username,lbl_username_error,txt_fname,txt_lname,hb_gender,hb_date);
+        GridPane.setConstraints(lbl_error,0,5,2,1);
+
+        grid.getChildren().addAll(lbl_title,txt_username,lbl_error,txt_fname,txt_lname,hb_gender,hb_date);
 
         txt_username.focusedProperty().addListener((observable,  oldValue,  newValue) -> {
             if(newValue && firstTime.get()){
@@ -128,10 +132,10 @@ public class Registration {
         AnchorPane.setBottomAnchor(btn_cancel,20.0);
         buttons.getChildren().addAll(btn_confirm,btn_cancel);
         container.getChildren().addAll(grid,buttons);
-        Scene scene = new Scene(container,400,300);
+        Scene scene = new Scene(container,400,340);
         scene.getStylesheets().add("style/style.css");
 
-        recover_handled_errors(txt_username,lbl_username_error,txt_fname,txt_lname,toggleGroup,rbtn_male,rbtn_female,cbox_day,cbox_month,cbox_year);
+        recover_handled_errors(txt_username,lbl_error,txt_fname,txt_lname,toggleGroup,rbtn_male,rbtn_female,cbox_day,cbox_month,cbox_year);
 
         btn_confirm.setOnAction(e -> {
             boolean done = true;
@@ -186,11 +190,15 @@ public class Registration {
                     User user = new User(username,fname,lname,gender,LocalDate.of(year,month,day));
                     success = true;
                     window.close();
-                }catch (Exception ex){
-                    lbl_username_error.setText(ex.getMessage());
-                    lbl_username_error.getStyleClass().add("username_taken");
+                }catch (UsernameException e1){
+                    lbl_error.setVisible(true);
+                    lbl_error.setText(e1.getMessage());
                     txt_username.getStyleClass().add("error_registration_text");
-                }
+                } catch (AgeException e2) {
+                    cbox_year.getStyleClass().add("error_registration_cbox");
+                    lbl_error.setVisible(true);
+                    lbl_error.setText(e2.getMessage());
+                } catch (Exception ignored) { } //just because it is causing errors
             }
         });
 
@@ -198,16 +206,15 @@ public class Registration {
         window.showAndWait();
         return success;
     }
-    private static void recover_handled_errors(TextField txt_username,Text lbl_username_error , TextField txt_fname,TextField txt_lname,
+    private static void recover_handled_errors(TextField txt_username,Label lbl_error , TextField txt_fname,TextField txt_lname,
                                                ToggleGroup toggleGroup, RadioButton rbtn_male, RadioButton rbtn_female,
                                                ComboBox<Integer> cbox_year, ComboBox<String> cbox_month, ComboBox<Integer> cbox_day){
 
         txt_username.textProperty().addListener((ov,oldValue,newValue)->{
             int index = txt_username.getStyleClass().indexOf("error_registration_text");
             if(index != -1) txt_username.getStyleClass().remove(index);
-            index = lbl_username_error.getStyleClass().indexOf("username_taken");
-            if(index != -1) lbl_username_error.getStyleClass().remove(index);
-            lbl_username_error.setText("");
+            lbl_error.setText("");
+            lbl_error.setVisible(false);
         });
         txt_fname.textProperty().addListener((ov,oldValue,newValue)->{
             int index = txt_fname.getStyleClass().indexOf("error_registration_text");
