@@ -1,5 +1,6 @@
 package sample;
 
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.Loader;
 import javafx.application.Application;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.IntegerProperty;
@@ -56,16 +57,19 @@ public class Profile {
         this.window = same_window;
         this.user = active_user;
         this.loader_scene = loader_scene;
-        init_layout();
+//
+//        scene = new Scene(get_profile_layout(lbl_users,lbl_groups),650,400);
+//        scene.getStylesheets().add("style/style.css");
+//        window.setScene(scene);
+    }
+    public BorderPane get_profile_layout(Label lbl_users,Label lbl_groups){
+        this.lbl_users = lbl_users;
+        this.lbl_groups = lbl_groups;
+        layout = new BorderPane();
         layout.setTop(set_header());
         layout.setRight(set_timeline());
-        layout.setBottom(set_footer());
-        scene = new Scene(layout,650,400);
-        scene.getStylesheets().add("style/style.css");
-        window.setScene(scene);
-    }
-    private void init_layout(){
-        layout = new BorderPane();
+        layout.setBottom(set_footer(lbl_users,lbl_groups));
+        return layout;
     }
     private AnchorPane set_header() {
         AnchorPane header = new AnchorPane();
@@ -79,8 +83,7 @@ public class Profile {
         Hyperlink lnk_logout = new Hyperlink("Log Out");
         lnk_logout.getStyleClass().add("headerlink");
         lnk_logout.setOnAction(e->{
-            user = null;
-            window.setScene(loader_scene);
+            lnk_logout.getScene().setRoot(get_home_layout());
         });
         HBox hb_header_links = new HBox(2);
         hb_header_links.getChildren().addAll(lnk_profile,lnk_logout);
@@ -123,14 +126,12 @@ public class Profile {
         hBox.getChildren().add(timeline);
         return hBox;
     }
-    private AnchorPane set_footer(){
+    private AnchorPane set_footer(Label lbl_users,Label lbl_groups){
         AnchorPane footer = new AnchorPane();
 
         HBox population = new HBox(2);
-        lbl_users = User.lbl_users;
         if(noUsers<2)lbl_users.setText(Integer.toString(noUsers) + " user");
         else lbl_users.setText(Integer.toString(noUsers) + " users");
-        lbl_groups = Group.lbl_groups;
         if(noGroups<2) lbl_groups.setText(Integer.toString(noGroups) + " group");
         else lbl_groups.setText(Integer.toString(noGroups) + " groups");
         Separator sep = new Separator();
@@ -142,9 +143,7 @@ public class Profile {
         lnk_delete_acc.setOnAction(e->{
             if(ConfirmDeleteAccount.display()){
                 user.delete();
-                if(noUsers<2)lbl_users.setText(Integer.toString(noUsers) + " user");
-                else lbl_users.setText(Integer.toString(noUsers) + " users");
-                window.setScene(loader_scene);
+                lnk_delete_acc.getScene().setRoot(get_home_layout());
             }
         });
 

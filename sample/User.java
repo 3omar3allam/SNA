@@ -25,7 +25,6 @@ public class User {
     static ArrayList<User> allUsersID;   // Vector of all users sorted by ID
     static ArrayList<User> allUsersName;   // Vector of all users sorted by Name
     static int noUsers;
-    static Label lbl_users = new Label();
 
     private int ID ;                               //Unique ID for each user
     private gender Gender;

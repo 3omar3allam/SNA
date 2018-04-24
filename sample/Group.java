@@ -14,7 +14,6 @@ public class Group {
     static ArrayList<Group> allGroupsID;   // Vector of all users sorted by ID
     static ArrayList<Group> allGroupsName;   // Vector of all users sorted by Name
     static int noGroups;
-    static Label lbl_groups = new Label();
 
     private static int currentID=0;
     public static Queue<Integer> availableIDs;   //m3mlthash int 3shan tala3 error :D

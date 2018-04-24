@@ -75,6 +75,7 @@
     -fx-font-weight: bold;
 }
 .link_delete_account:armed{
+    -fx-border-width: 0;
     -fx-text-fill: darkred;
     -fx-underline: false;
 }

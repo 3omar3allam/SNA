@@ -41,29 +41,24 @@ import static sample.Group.*;
 
 
 public class Interface extends Application {
-    private Stage window;
-    private Scene scene;
-    private FileChooser fileChooser;
-    private File data;
-    private BorderPane layout;
-    private Label lbl_users,lbl_groups;
-    private User current_user;
+    private static Stage window;
+    private static Scene scene;
+    private static FileChooser fileChooser;
+    private static File data;
+    private static BorderPane layout;
+    private static Label lbl_users,lbl_groups;
+    private static User current_user;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         init_Lists();
         window = primaryStage;
         window.setTitle("Social-Networks");
-        init_layout();
-        layout.setTop(set_header());
-        layout.setLeft(set_search_field());
-        layout.setRight(set_login_form());
-        layout.setBottom(set_footer());
 
-        scene = new Scene(layout,650,400);
+        scene = new Scene(get_home_layout(),650,400);
         scene.getStylesheets().add("style/style.css");
-
         window.setScene(scene);
+
         window.show();
         /*window.setOnCloseRequest( e -> {
             e.consume();
@@ -81,24 +76,29 @@ public class Interface extends Application {
         launch(args);
 
     }
-    private void import_data() throws IOException {
+    private static void import_data() throws IOException {
         /*
         BufferedReader in = new BufferedReader(new FileReader(data));
         String line;
         while((line = in.readLine()) != null)  read(line);
         */
     }
-    private void read(String line){
+    private static void read(String line){
         System.out.println(line);
     }
-    private void save(){
+    private static void save(){
         System.out.println("saved");
     }
-    private void init_layout(){
+    static BorderPane get_home_layout(){
         layout = new BorderPane();
         layout.setCenter(null);
+        layout.setTop(set_header());
+        layout.setLeft(set_search_field());
+        layout.setRight(set_login_form());
+        layout.setBottom(set_footer());
+        return layout;
     }
-    private AnchorPane set_header(){
+    private static AnchorPane set_header(){
         AnchorPane header = new AnchorPane();
         header.getStyleClass().add("header");
 
@@ -108,7 +108,7 @@ public class Interface extends Application {
         lnk_home.getStyleClass().add("headerlink");
         lnk_home.setOnAction(e -> {
             try {
-                start(window);
+                window.setScene(scene);
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
@@ -120,7 +120,7 @@ public class Interface extends Application {
         AnchorPane.setRightAnchor(lnk_home,0.0);
         return header;
     }
-    private AnchorPane set_footer() {
+    private static AnchorPane set_footer() {
         AnchorPane footer = new AnchorPane();
 
         Button btn_import = new Button("Import Data");
@@ -137,10 +137,10 @@ public class Interface extends Application {
         AnchorPane.setBottomAnchor(btn_import, 20.0);
 
         HBox population = new HBox(2);
-        lbl_users = User.lbl_users;
+        lbl_users = new Label();
         if(noUsers<2)lbl_users.setText(Integer.toString(noUsers) + " user");
         else lbl_users.setText(Integer.toString(noUsers) + " users");
-        lbl_groups = Group.lbl_groups;
+        lbl_groups = new Label();
         if(noGroups<2) lbl_groups.setText(Integer.toString(noGroups) + " group");
         else lbl_groups.setText(Integer.toString(noGroups) + " groups");
         Separator sep = new Separator();
@@ -152,7 +152,7 @@ public class Interface extends Application {
         footer.getChildren().addAll(btn_import, population);
         return footer;
     }
-    private GridPane set_search_field(){
+    private static GridPane set_search_field(){
         GridPane search_layout = new GridPane();
         search_layout.setVgap(10);
         search_layout.setHgap(5);
@@ -221,9 +221,13 @@ public class Interface extends Application {
             }
             else {
                 lst_results_group.setVisible(true);
-                for (Group group : allGroupsName)
-                    if (group.getName().toLowerCase().contains(newValue.toLowerCase())) matching_groups.add(group);
-                lst_results_group.setCellFactory( e -> new ListCell<Group>(){
+                for (Group group : allGroupsName){
+                    int length = newValue.length();
+                    if (length <= group.getName().length() && group.getName().toLowerCase().substring(0,length).equals(newValue.toLowerCase())) matching_groups.add(group);
+                }
+                if(matching_groups.isEmpty()) lst_results_group.setVisible(false);
+
+                else lst_results_group.setCellFactory( e -> new ListCell<Group>(){
                     @Override
                     protected void updateItem(Group item, boolean empty) {
                         super.updateItem(item, empty);
@@ -258,7 +262,7 @@ public class Interface extends Application {
         search_layout.getChildren().addAll(lbl_search_user,lbl_search_group,txt_search_user,txt_search_group,lst_results_user,lst_results_group);
         return search_layout;
     }
-    private VBox set_login_form(){
+    private static VBox set_login_form(){
         VBox login_layout = new VBox(10);
 
         HBox hbox = new HBox(5);
@@ -280,7 +284,7 @@ public class Interface extends Application {
                     txt_username.getStyleClass().remove("login_error_field");
                     lbl_error.setVisible(false);
                 }
-                new Profile(window,current_user,scene);
+                btn_login.getScene().setRoot(new Profile(window,current_user,scene).get_profile_layout(lbl_users,lbl_groups));
                 txt_username.setText("");
                 current_user = null;
             }
@@ -310,7 +314,7 @@ public class Interface extends Application {
         login_layout.getStyleClass().add("login_form");
         return(login_layout);
     }
-    private boolean login(String username){
+    private static boolean login(String username){
         int index = userNameBinarySearch(allUsersName,0,allUsersName.size(),username);
         if(index == -1) return false;
         else {
@@ -318,31 +322,31 @@ public class Interface extends Application {
             return true;
         }
     }
-    private void createAccount(){
+    private static void createAccount(){
         if(Registration.display("Register")){
             if(noUsers<2) lbl_users.setText(Integer.toString(noUsers)+" user");
             else lbl_users.setText(Integer.toString(noUsers) + " users");
         }
     }
-    private void init_Lists() throws Exception {
+    private static void init_Lists() throws Exception {
         allUsersID = new ArrayList<>(0);
         allUsersName = new ArrayList<>(0);
         User.availableIDs = new LinkedList<>();
         Group.availableIDs = new LinkedList<>();
         allGroupsID = new ArrayList<>(0);
         allGroupsName = new ArrayList<>(0);
-        lbl_users = User.lbl_users;
-        lbl_groups = Group.lbl_groups;
-        new User("3omar3allam","Omar","Allam","male",LocalDate.of(1996,7,7));
+        try{
+            new User("3omar3allam","Omar","Allam","male",LocalDate.of(1996,7,7));
+        }catch(Exception ignored){}
         //names_generator();
     }
-    private void visit_profile(User profile){
+    private static void visit_profile(User profile){
 
     }
-    private void visit_group(Group group){
+    private static void visit_group(Group group){
 
     }
-    private void names_generator() {
+    private static void names_generator() {
         Random rand = new Random();
         for(int i = 0; i<100000;i++){
             int numChar = 1 + rand.nextInt(5);
