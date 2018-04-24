@@ -1,6 +1,11 @@
 package sample;
 
 
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+
+import javax.naming.Name;
+import java.awt.*;
 import java.io.BufferedReader;
 import java.text.ParseException;
 import java.time.LocalDate;
@@ -17,95 +22,91 @@ enum gender{male,female}
 public class User {
 
 
-    public static ArrayList<User> allUsersID;   // Vector of all users sorted by ID
-    public static ArrayList<User> allUsersName;   // Vector of all users sorted by Name
+    static ArrayList<User> allUsersID;   // Vector of all users sorted by ID
+    static ArrayList<User> allUsersName;   // Vector of all users sorted by Name
+    static int noUsers;
+    static Label lbl_users = new Label();
+
     private int ID ;                               //Unique ID for each user
     private gender Gender;
     private LocalDate birthDate;
-    public static int currentID=0;
-    public static Queue<Integer>  availableIDs;  //m3mlthash int 3shan tala3 error :D
+    static int newID=0;
+    static Queue<Integer>  availableIDs;  //m3mlthash int 3shan tala3 error :D
     // ^^ wenta btinitializeha mat3melsh = new Queue<> .. e3mel = new ArrayList<>() aw new LinkedList<>()  <allam>
     private String FirstName;
     private String LastName;
     private String UserName;              //Unique username for login
     private LinkedList<User> Friends;     //List of all friends of the user
     private int noFriends;
+    private int noPosts;
+    private LinkedList<Post> Posts;
 
     //******************* Constructors******************//
     public User(String userName,String firstName,String lastName, String gender, LocalDate birthDate)throws Exception {
+        if(!firstName.matches("\\w[(\\w|\\s)]*")) throw new NameException("Invalid ",new Throwable("first name"));
+        if(!lastName.matches("\\w[(\\w|\\s)]*")) throw new NameException("Invalid ",new Throwable("last name"));
         FirstName = firstName;
         LastName = lastName;
         if(!userName.matches("[\\w]+")) throw new UsernameException("username should contain only word characters");
         UserName = userName;
         this.noFriends = 0;
+        this.noPosts = 0;
+        this.Posts = new LinkedList<>();
         if(!availableIDs.isEmpty())ID=availableIDs.remove();
-        else {ID=currentID; currentID++;}
+        else ID=newID;
         this.birthDate = LocalDate.of(birthDate.getYear(),birthDate.getMonth(),birthDate.getDayOfMonth());
         if(this.getAge()<8) throw new AgeException("8 years is the minimum age allowed");
         if(gender.equals("male"))  Gender = sample.gender.male;
         else Gender = sample.gender.female;
         addToList(this); //implemented in usefulFunctions class
-    }
-
-    public User(String name) throws Exception {
-        StringTokenizer nameToken = new StringTokenizer(name);
-        try{
-            FirstName = nameToken.nextToken(" ");
-            LastName = nameToken.nextToken();
-        }catch(Exception ex){
-            throw new Exception("Invalid First/Last Name");
-        }
-        noFriends=0;
-        if(!availableIDs.isEmpty())ID=availableIDs.remove();
-        else {ID=currentID; currentID++;}
-        addToList(this);
+        newID++;
+        noUsers++;
     }
 
     public User(String userName, String firstName,String lastName)throws Exception{
         this.UserName=userName;
+        if(!firstName.matches("\\w[(\\w|\\s)]*")) throw new NameException("Invalid ",new Throwable("first name"));
+        if(!lastName.matches("\\w[(\\w|\\s)]*")) throw new NameException("Invalid ",new Throwable("last name"));
         FirstName = firstName;
         LastName = lastName;
         noFriends=0;
+        noPosts = 0;
+        this.Posts = new LinkedList<>();
         if(!availableIDs.isEmpty())ID=availableIDs.remove();
-        else {ID=currentID; currentID++;}
+        else ID=newID;
         addToList(this);
+        newID++;
+        noUsers++;
     }
 
-    public User(String userName, String name) throws Exception {
-        this.UserName=userName;
-        StringTokenizer nameToken = new StringTokenizer(name);
-        try{
-            FirstName = nameToken.nextToken(" ");
-            LastName = nameToken.nextToken();
-        }catch(Exception ex){
-            throw new Exception("Invalid First/Last Name");
-        }
-        noFriends=0;
+    public User() throws Exception {  //da by3mel eh ? :D <allam>
         if(!availableIDs.isEmpty())ID=availableIDs.remove();
-        else {ID=currentID; currentID++;}
-        addToList(this);
-    }
-
-    public User() throws Exception {
-        if(!availableIDs.isEmpty())ID=availableIDs.remove();
-        else {ID=currentID; currentID++;}
+        else ID=newID;
         FirstName=null;
         LastName=null;
         noFriends=0;
+        noPosts = 0;
+        this.Posts = new LinkedList<>();
         addToList(this);
+        newID++;
+        noUsers++;
     }
 
     //*******************Copy Constructor******************//
-    public User(User copyUser) throws Exception
+    public User(User copyUser) throws Exception //w da kaman by3mel eh ?? :D
     {
         if(!availableIDs.isEmpty())ID=availableIDs.remove();
-        else {ID=currentID; currentID++;}
+        else ID=newID;
         FirstName=copyUser.getFirstName();
         LastName=copyUser.getLastName();
         Friends=copyUser.getFriends();
-        noFriends=Friends.size();
+        noFriends=copyUser.noFriends;
+        noPosts = copyUser.noPosts;
+        this.Posts.addAll(copyUser.Posts);
         UserName=copyUser.getUserName();
         addToList(this);
+        newID++;
+        noUsers++;
     }
 
 
@@ -113,7 +114,7 @@ public class User {
 
     @Override
     public String toString(){
-        StringBuilder buffer= new StringBuilder(ID + "," + UserName + "," + FirstName + "," + LastName);
+        StringBuilder buffer = new StringBuilder(ID + "," + UserName + "," + FirstName + "," + LastName);
         for (int i = 0; i <noFriends ; i++) {
             buffer.append(',').append(Friends.get(i).ID);
         }
@@ -193,6 +194,27 @@ public class User {
             noFriends--;
         }
     }
+    public void addPost(TextArea content){
+        Post post = new Post(content);
+        if(Posts == null) Posts = new LinkedList<>();
+        Posts.add(post);
+    }
+
+    public void setNoFriends(int noFriends) {
+        this.noFriends = noFriends;
+    }
+
+    public int getNoPosts() {
+        return noPosts;
+    }
+
+    public void setNoPosts(int noPosts) {
+        this.noPosts = noPosts;
+    }
+
+    public LinkedList<Post> getPosts() {
+        return Posts;
+    }
 
     public boolean isFriend(User user)
     {
@@ -201,15 +223,18 @@ public class User {
 
     public void delete()
     {
+        int id = ID;
+        allUsersID.remove(id);
+        allUsersName.remove(this);
+        availableIDs.add(id);
         FirstName=null;
         LastName=null;
         UserName=null;
-        noFriends=0;
         Friends=null;
         Gender=null;
         birthDate=null;
-        allUsersID.remove(this);
-        allUsersName.remove(this);
+        Posts.clear();
+        Posts = null;
+        noUsers--;
     }
-
 }

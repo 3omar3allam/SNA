@@ -187,7 +187,7 @@ public class Registration {
             }
             if(done){
                 try{
-                    User user = new User(username,fname,lname,gender,LocalDate.of(year,month,day));
+                    new User(username,fname,lname,gender,LocalDate.of(year,month,day));
                     success = true;
                     window.close();
                 }catch (UsernameException e1){
@@ -198,6 +198,12 @@ public class Registration {
                     cbox_year.getStyleClass().add("error_registration_cbox");
                     lbl_error.setVisible(true);
                     lbl_error.setText(e2.getMessage());
+                }catch (NameException e3){
+                    String cause = e3.getCause().getMessage();
+                    lbl_error.setVisible(true);
+                    lbl_error.setText(e3.getMessage()+cause);
+                    if(cause.equals("first name")) txt_fname.getStyleClass().add("error_registration_text");
+                    else if(cause.equals("last name")) txt_lname.getStyleClass().add("error_registration_text");
                 } catch (Exception ignored) { } //just because it is causing errors
             }
         });

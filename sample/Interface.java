@@ -29,6 +29,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Observer;
@@ -41,34 +42,32 @@ import static sample.Group.*;
 
 public class Interface extends Application {
     private Stage window;
-    private Scene Home,User,Group;
+    private Scene scene;
     private FileChooser fileChooser;
     private File data;
     private BorderPane layout;
-    ObservableList<String> Names = FXCollections.observableArrayList();
-    private Label lbl_users;
-    private Label lbl_groups;
-    private int noUsers,noGroups;
+    private Label lbl_users,lbl_groups;
+    private User current_user;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        noUsers = 0;
-        noGroups = 0;
         init_Lists();
         window = primaryStage;
         window.setTitle("Social-Networks");
-        set_layout();
-        set_header();
-        set_search_field();
-        set_login_form();
-        set_footer();
-        Home = new Scene(layout,650,400);
-        Home.getStylesheets().add("style/style.css");
-        window.setScene(Home);
+        init_layout();
+        layout.setTop(set_header());
+        layout.setLeft(set_search_field());
+        layout.setRight(set_login_form());
+        layout.setBottom(set_footer());
+
+        scene = new Scene(layout,650,400);
+        scene.getStylesheets().add("style/style.css");
+
+        window.setScene(scene);
         window.show();
         /*window.setOnCloseRequest( e -> {
             e.consume();
-            int answer = ConfirmBox.display("Close Project","Do you want to save changes?");
+            int answer = ConfirmClose.display("Close Project","Do you want to save changes?");
             if(answer == 1){
                 save();
                 window.close();
@@ -80,6 +79,7 @@ public class Interface extends Application {
     }
     public static void main(String[] args) {
         launch(args);
+
     }
     private void import_data() throws IOException {
         /*
@@ -94,29 +94,18 @@ public class Interface extends Application {
     private void save(){
         System.out.println("saved");
     }
-    private void set_layout(){
+    private void init_layout(){
         layout = new BorderPane();
         layout.setCenter(null);
     }
-    private void set_header(){
+    private AnchorPane set_header(){
         AnchorPane header = new AnchorPane();
         header.getStyleClass().add("header");
 
         Label lbl_title = new Label("Social-Networks");
         lbl_title.setStyle("-fx-text-fill: aliceblue;    -fx-font-size: 20;    -fx-font-weight: bold;");
-        HBox buttons = new HBox();
-        set_home_buttons(buttons);
-        header.getChildren().addAll(lbl_title,buttons);
-        AnchorPane.setTopAnchor(lbl_title,0.0);
-        AnchorPane.setTopAnchor(buttons,0.0);
-        AnchorPane.setLeftAnchor(lbl_title,0.0);
-        AnchorPane.setRightAnchor(buttons,0.0);
-
-        layout.setTop(header);
-    }
-    private void set_home_buttons(HBox buttons){
-        buttons.setSpacing(7);
         Hyperlink lnk_home = new Hyperlink("HOME");
+        lnk_home.getStyleClass().add("headerlink");
         lnk_home.setOnAction(e -> {
             try {
                 start(window);
@@ -124,13 +113,14 @@ public class Interface extends Application {
                 e1.printStackTrace();
             }
         });
-        Hyperlink lnk_profile = new Hyperlink();
-        lnk_profile.setVisible(false);
-        buttons.getChildren().addAll(lnk_profile,lnk_home);
-        lnk_home.getStyleClass().add("headerlink");
-        lnk_profile.getStyleClass().add("headerlink");
+        header.getChildren().addAll(lbl_title,lnk_home);
+        AnchorPane.setTopAnchor(lbl_title,0.0);
+        AnchorPane.setTopAnchor(lnk_home,0.0);
+        AnchorPane.setLeftAnchor(lbl_title,0.0);
+        AnchorPane.setRightAnchor(lnk_home,0.0);
+        return header;
     }
-    private void set_footer() {
+    private AnchorPane set_footer() {
         AnchorPane footer = new AnchorPane();
 
         Button btn_import = new Button("Import Data");
@@ -143,24 +133,26 @@ public class Interface extends Application {
                 e1.printStackTrace();
             }
         });
-        AnchorPane.setLeftAnchor(btn_import, 20.0);
-        AnchorPane.setBottomAnchor(btn_import, 15.0);
+        AnchorPane.setRightAnchor(btn_import, 25.0);
+        AnchorPane.setBottomAnchor(btn_import, 20.0);
 
         HBox population = new HBox(2);
-        if(lbl_users == null)lbl_users = new Label();
-        lbl_users.setText(Integer.toString(noUsers) + " users");
-        if(lbl_groups == null)lbl_groups = new Label();
-        lbl_groups.setText(Integer.toString(noGroups) + " groups");
+        lbl_users = User.lbl_users;
+        if(noUsers<2)lbl_users.setText(Integer.toString(noUsers) + " user");
+        else lbl_users.setText(Integer.toString(noUsers) + " users");
+        lbl_groups = Group.lbl_groups;
+        if(noGroups<2) lbl_groups.setText(Integer.toString(noGroups) + " group");
+        else lbl_groups.setText(Integer.toString(noGroups) + " groups");
         Separator sep = new Separator();
         sep.setOrientation(Orientation.VERTICAL);
         population.getChildren().addAll(lbl_users, sep, lbl_groups);
 
-        AnchorPane.setRightAnchor(population, 15.0);
-        AnchorPane.setBottomAnchor(population, 15.0);
+        AnchorPane.setLeftAnchor(population, 25.0);
+        AnchorPane.setBottomAnchor(population, 20.0);
         footer.getChildren().addAll(btn_import, population);
-        layout.setBottom(footer);
+        return footer;
     }
-    private void set_search_field(){
+    private GridPane set_search_field(){
         GridPane search_layout = new GridPane();
         search_layout.setVgap(10);
         search_layout.setHgap(5);
@@ -264,9 +256,9 @@ public class Interface extends Application {
         GridPane.setConstraints(lst_results_group,1,2);
 
         search_layout.getChildren().addAll(lbl_search_user,lbl_search_group,txt_search_user,txt_search_group,lst_results_user,lst_results_group);
-        layout.setLeft(search_layout);
+        return search_layout;
     }
-    private void set_login_form(){
+    private VBox set_login_form(){
         VBox login_layout = new VBox(10);
 
         HBox hbox = new HBox(5);
@@ -276,16 +268,32 @@ public class Interface extends Application {
         txt_username.setMinWidth(50);
         txt_username.getStyleClass().add("login_field");
 
+        Label lbl_error = new Label("invalid username");
+        lbl_error.setStyle("-fx-text-alignment: center; -fx-text-fill: red");
+        lbl_error.setVisible(false);
+
         Button btn_login = new Button("Login");
         btn_login.setOnAction( e -> {
             String username = txt_username.getText();
             if(login(username)){
-                if(login_layout.getChildren().size()>3){
+                if(txt_username.getStyleClass().indexOf("login_error_field") != -1){
                     txt_username.getStyleClass().remove("login_error_field");
-                    login_layout.getChildren().remove(3);
+                    lbl_error.setVisible(false);
                 }
+                new Profile(window,current_user,scene);
+                txt_username.setText("");
+                current_user = null;
             }
-            else login_error(login_layout,txt_username);
+            else {
+                txt_username.getStyleClass().add("login_error_field");
+                lbl_error.setVisible(true);
+            }
+        });
+        txt_username.textProperty().addListener((ov, oldValue,newValue)->{
+            if (newValue != null && txt_username.getStyleClass().indexOf("login_error_field")!=-1) {
+                txt_username.getStyleClass().remove("login_error_field");
+                lbl_error.setVisible(false);
+            }
         });
 
         hbox.getChildren().addAll(txt_username,btn_login);
@@ -297,39 +305,35 @@ public class Interface extends Application {
         btn_create.setOnAction( e -> createAccount());
         btn_create.setMaxWidth(Integer.MAX_VALUE);
 
-        login_layout.getChildren().addAll(hbox,text,btn_create);
+        login_layout.getChildren().addAll(hbox,text,btn_create,lbl_error);
         login_layout.setAlignment(Pos.TOP_CENTER);
         login_layout.getStyleClass().add("login_form");
-        layout.setRight(login_layout);
+        return(login_layout);
     }
     private boolean login(String username){
         int index = userNameBinarySearch(allUsersName,0,allUsersName.size(),username);
         if(index == -1) return false;
         else {
-            currentID = allUsersName.get(index).getID();
+            current_user = allUsersName.get(index);
             return true;
         }
     }
     private void createAccount(){
         if(Registration.display("Register")){
-            noUsers ++;
-            lbl_users.setText(Integer.toString(noUsers)+" Users");
-        }
-    }
-    private void login_error(VBox layout,TextField txtID){
-        if(layout.getChildren().size()<4){
-            Text error = new Text("invalid username");
-            error.setStyle("-fx-alignment: center; -fx-fill: red");
-            layout.getChildren().add(error);
-            txtID.getStyleClass().add("login_error_field");
+            if(noUsers<2) lbl_users.setText(Integer.toString(noUsers)+" user");
+            else lbl_users.setText(Integer.toString(noUsers) + " users");
         }
     }
     private void init_Lists() throws Exception {
         allUsersID = new ArrayList<>(0);
         allUsersName = new ArrayList<>(0);
-        availableIDs = new LinkedList<>();
+        User.availableIDs = new LinkedList<>();
+        Group.availableIDs = new LinkedList<>();
         allGroupsID = new ArrayList<>(0);
         allGroupsName = new ArrayList<>(0);
+        lbl_users = User.lbl_users;
+        lbl_groups = Group.lbl_groups;
+        new User("3omar3allam","Omar","Allam","male",LocalDate.of(1996,7,7));
         //names_generator();
     }
     private void visit_profile(User profile){

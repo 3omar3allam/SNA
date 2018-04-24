@@ -6,10 +6,19 @@ public class CustomExceptions extends Exception {  //dummy class for file name o
     }
 }
 
-
 class UsernameException extends Exception{
     UsernameException(String message) {
         super(message);
+    }
+}
+class GroupNameException extends Exception{
+    GroupNameException(String message) {
+        super(message);
+    }
+}
+class NameException extends Exception{
+    NameException(String message,Throwable cause){
+        super(message,cause);
     }
 }
 

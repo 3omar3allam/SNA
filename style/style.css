@@ -15,8 +15,17 @@
     -fx-text-fill: navy;
     -fx-underline: false;
 }
+.headerlink:armed{
+    -fx-background-color: lightgray;
+    -fx-background-radius: 5;
+    -fx-text-fill: navy;
+    -fx-underline: false;
+}
+.headerlink:visited{
+    -fx-underline: false;
+}
 .login_form{
-    -fx-padding: 25;
+    -fx-padding: 30px 25px;
 }
 .login_field{
     -fx-alignment: center
@@ -26,27 +35,15 @@
     -fx-alignment: center;
     -fx-border-radius: 3;
 }
-
-.search_form{
-    -fx-padding: 30px 15px;
+.search_form {
+    -fx-padding: 30px 25px;
     -fx-alignment: top-center;
     -fx-max-width: 350;
 }
-.date-picker > .arrow-button {
-    -fx-padding: 0px;
-}
-
-.date-picker > .arrow-button > .arrow {
-    -fx-padding: 0px;
-}
-.date-picker > .date-picker-display-node {
-    -fx-background-insets: 1 1 1 1;
-}
-
 .registration_form{
     -fx-background-color: linear-gradient(navy,blue,lightseagreen,lightblue,aliceblue);
     -fx-alignment: center;
-    -fx-padding: 30px;
+    -fx-padding: 30px 25px;
 }
 .error_registration_radio > .radio{
     -fx-background-color: palevioletred;
@@ -61,4 +58,26 @@
     -fx-padding: 30;
     -fx-text-fill: darkred;
     -fx-font-weight: bold;
+}
+.new_post{
+    -fx-padding: 15px;
+    -fx-text-alignment: left;
+    -fx-fill: dimgrey;
+    -fx-min-width: 200px;
+    -fx-max-height: 150px;
+}
+.timeline{
+    -fx-padding: 30px 25px;
+}
+.link_delete_account{
+    -fx-text-fill: red;
+    -fx-underline: false;
+    -fx-font-weight: bold;
+}
+.link_delete_account:armed{
+    -fx-text-fill: darkred;
+    -fx-underline: false;
+}
+.link_delete_account:visited{
+    -fx-border-width: 0;
 }

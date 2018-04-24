@@ -1,42 +1,38 @@
 package sample;
 
+import javafx.scene.control.Label;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import static sample.usefulFunctions.*;
+
 public class Group {
 
-    public static ArrayList<Group> allGroupsID;   // Vector of all users sorted by ID
-    public static ArrayList<Group> allGroupsName;   // Vector of all users sorted by Name
+    static ArrayList<Group> allGroupsID;   // Vector of all users sorted by ID
+    static ArrayList<Group> allGroupsName;   // Vector of all users sorted by Name
+    static int noGroups;
+    static Label lbl_groups = new Label();
+
     private static int currentID=0;
-    private static Queue<Integer> availableIDs;   //m3mlthash int 3shan tala3 error :D
+    public static Queue<Integer> availableIDs;   //m3mlthash int 3shan tala3 error :D
     private String Name;
     private int ID;
     private LinkedList<User> Members;
     private int noMembers;
 
     ////////////**********Constructors**********/////////
-    public Group(String name, LinkedList<User> members) {
+    public Group(String name,User admin)throws Exception {
         Name = name;
         if(!availableIDs.isEmpty())ID=availableIDs.remove();
-        else {ID=currentID; currentID++;}
-        Members = members;
-        this.noMembers = members.size();
-    }
-
-    public Group()
-    {
-        Name = null;
-        if(!availableIDs.isEmpty())ID=availableIDs.remove();
-        else {ID=currentID; currentID++;}
-        noMembers = 0;
-    }
-
-    public Group(String name) {
-        Name = name;
-        if(!availableIDs.isEmpty())ID=availableIDs.remove();
-        else {ID=currentID; currentID++;}
+        else ID=currentID;
+        Members = new LinkedList<>();
+        Members.add(admin);
+        addToList(this);
+        noGroups++;
+        currentID++;
     }
 
     /////////////*******String Function used to save into csv file**********/
@@ -83,7 +79,7 @@ public class Group {
         noMembers++;
     }
 
-    public  void deleteMember(User user)
+    public void removeMember(User user)
     {
         if (Members.contains(user)) {
             Members.remove(user);
@@ -94,7 +90,17 @@ public class Group {
     public  boolean isMember(User user)
     {
         return Members.contains(user);
-
     }
+
+    public void delete(){
+        allGroupsID.remove(ID);
+        allGroupsName.remove(this);
+        Members.clear();
+        Name = null;
+        Members = null;
+        availableIDs.add(ID);
+        noGroups--;
+    }
+
 
 }
