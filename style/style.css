@@ -59,16 +59,6 @@
     -fx-text-fill: darkred;
     -fx-font-weight: bold;
 }
-.new_post{
-    -fx-padding: 15px;
-    -fx-text-alignment: left;
-    -fx-fill: dimgrey;
-    -fx-min-width: 200px;
-    -fx-max-height: 150px;
-}
-.timeline{
-    -fx-padding: 30px 25px;
-}
 .link_delete_account{
     -fx-text-fill: red;
     -fx-underline: false;
@@ -81,4 +71,57 @@
 }
 .link_delete_account:visited{
     -fx-border-width: 0;
+}
+.new_post{
+    -fx-border-width: 2;
+    -fx-padding: 15px;
+    -fx-text-alignment: left;
+    -fx-fill: dimgrey;
+    -fx-min-width: 200px;
+    -fx-max-height: 150px;
+}
+.timeline{
+    -fx-padding: 15px 20px;
+    -fx-min-width: 450;
+}
+.timeline_for_non_users{
+    -fx-padding: 15px 20px;
+    -fx-min-width: 0px;
+}
+.list_of_posts {
+    -fx-padding: 0px ;
+    -fx-background-color: transparent ;
+}
+.list_of_posts .list-cell {
+    -fx-padding: 5px ;
+    -fx-background-color: transparent, -fx-background ;
+    -fx-background-insets: 2px, 2px ;
+}
+.list_of_posts .list-cell:empty {
+    -fx-padding: 2px ;
+    -fx-background-color: transparent ;
+    -fx-background-insets: 0 ;
+}
+.post_link{
+    -fx-underline: false;
+    -fx-text-fill: blue;
+}
+.post_link:armed{
+    -fx-underline: false;
+    -fx-font-weight: bold;
+    -fx-border-width: 0px;
+    -fx-text-fill: blue;
+}
+.post_link:visited{
+    -fx-underline: false;
+    -fx-border-width: 0px;
+    -fx-text-fill: blue;
+}
+.profile_name{
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: navy;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-padding: 5;
 }

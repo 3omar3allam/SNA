@@ -1,5 +1,7 @@
 package sample;
 
+import javafx.collections.ObservableList;
+
 import java.util.ArrayList;
 
 import static sample.User.allUsersID;
@@ -8,7 +10,6 @@ import static sample.Group.allGroupsID;
 import static sample.Group.allGroupsName;
 
 public class usefulFunctions {
-
 
     static int userNameBinarySearch(ArrayList<User> arr, int start, int end, String name){
         if(start >= end) return -1;
@@ -112,6 +113,29 @@ public class usefulFunctions {
         if(index==-1); //userID duplication (impossible)
         else allGroupsID.add(index, group);
     }
+
+    public static void user_graph_search(User source, ObservableList<User> matching_names, String name){ //add the results to the observable list
+        //law 3ayz tezawed arguments e3mel interfacing w endah function tanya mattala3sh den omy :D
+        //feel free enak traga3ha fadya law mafesh results .. mesh hyhsal errors
+
+        //khaly el code da el condition bta3ak .. 3ashan di matching wana basearch mesh shart ykon el esmo kollo
+        /*
+        int lengh = name.length();
+        if( (length <= found_first_name_in_search && name == found_first_name_in_search.substring(0,length))
+            || (length <= found_last_name_in_search && name == found_first_name_in_search.substring(0,length)) )
+                <yeb2a hoto fel list>
+
+         */
+
+
+        /*da code testing eb2a shelo*/
+        matching_names.addAll(allUsersName);
+    }
+
+    public static void group_graph_search(User source, ObservableList<Group> matching_names, String name){ //add the results to the observable list
+
+    }
+
 }
 
 

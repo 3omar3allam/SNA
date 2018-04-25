@@ -1,6 +1,7 @@
 package sample;
 
 
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 
@@ -39,6 +40,7 @@ public class User {
     private int noFriends;
     private int noPosts;
     private LinkedList<Post> Posts;
+    private LinkedList<Group> Groups;
 
     //******************* Constructors******************//
     public User(String userName,String firstName,String lastName, String gender, LocalDate birthDate)throws Exception {
@@ -50,7 +52,6 @@ public class User {
         UserName = userName;
         this.noFriends = 0;
         this.noPosts = 0;
-        this.Posts = new LinkedList<>();
         if(!availableIDs.isEmpty())ID=availableIDs.remove();
         else ID=newID;
         this.birthDate = LocalDate.of(birthDate.getYear(),birthDate.getMonth(),birthDate.getDayOfMonth());
@@ -58,8 +59,12 @@ public class User {
         if(gender.equals("male"))  Gender = sample.gender.male;
         else Gender = sample.gender.female;
         addToList(this); //implemented in usefulFunctions class
+        Posts = new LinkedList<>();
+        Friends = new LinkedList<>();
+        Groups = new LinkedList<>();
         newID++;
         noUsers++;
+
     }
 
     public User(String userName, String firstName,String lastName)throws Exception{
@@ -70,25 +75,14 @@ public class User {
         LastName = lastName;
         noFriends=0;
         noPosts = 0;
-        this.Posts = new LinkedList<>();
+        addToList(this);
         if(!availableIDs.isEmpty())ID=availableIDs.remove();
         else ID=newID;
-        addToList(this);
         newID++;
         noUsers++;
-    }
-
-    public User() throws Exception {  //da by3mel eh ? :D <allam>
-        if(!availableIDs.isEmpty())ID=availableIDs.remove();
-        else ID=newID;
-        FirstName=null;
-        LastName=null;
-        noFriends=0;
-        noPosts = 0;
-        this.Posts = new LinkedList<>();
-        addToList(this);
-        newID++;
-        noUsers++;
+        Posts = new LinkedList<>();
+        Friends = new LinkedList<>();
+        Groups = new LinkedList<>();
     }
 
     //*******************Copy Constructor******************//
@@ -96,14 +90,15 @@ public class User {
     {
         if(!availableIDs.isEmpty())ID=availableIDs.remove();
         else ID=newID;
+        UserName=copyUser.getUserName();
         FirstName=copyUser.getFirstName();
         LastName=copyUser.getLastName();
-        Friends=copyUser.getFriends();
-        noFriends=copyUser.noFriends;
-        noPosts = copyUser.noPosts;
-        this.Posts.addAll(copyUser.Posts);
-        UserName=copyUser.getUserName();
+        noFriends=copyUser.getNoFriends();
+        noPosts = copyUser.getNoPosts();
         addToList(this);
+        Posts = new LinkedList<>(copyUser.getPosts());
+        Friends = new LinkedList<>(copyUser.getFriends());
+        Groups = new LinkedList<>(copyUser.getGroups());
         newID++;
         noUsers++;
     }
@@ -174,6 +169,10 @@ public class User {
         return noFriends;
     }
     public gender getGender(){return Gender;}
+    public String getGender_string(){
+        if(this.Gender == gender.male) return "Male";
+        else return "Female";
+    }
     public void setGender(gender g){Gender=g;}
     public LocalDate getBirthDate(){return birthDate;}
     public void setBirthDate(LocalDate d){birthDate=d;}
@@ -183,22 +182,49 @@ public class User {
     ////////*********other functions***********//////////////
     public void addFriend(User user)
     {
-        Friends.add(user);
-        noFriends++;
+        if(!this.Friends.contains(user)) {
+            Friends.add(user);
+            noFriends++;
+            user.getFriends().add(this);
+            user.setNoFriends(user.getNoFriends()+1);
+        }
     }
     public void deleteFriend(User user)
     {
         if (Friends.contains(user)) {
             Friends.remove(user);
             noFriends--;
+            user.getFriends().remove(this);
+            user.setNoFriends(user.getNoFriends()-1);
         }
     }
-    public void addPost(TextArea content){
+    public Post addPost(String content){
         Post post = new Post(content);
         if(Posts == null) Posts = new LinkedList<>();
         Posts.add(post);
+        noPosts++;
+        post.setOwner(this);
+        return post;
     }
 
+    public void deletePost(Post post){
+        Posts.remove(post);
+        noPosts--;
+    }
+
+    public void likePost(Post post){
+        if(!post.getLikers().contains(this)) {
+            post.getLikers().add(this);
+            post.like();
+        }
+    }
+
+    public void unlikePost(Post post) {
+        if (post.getLikers().contains(this)) {
+            post.getLikers().remove(this);
+            post.unlike();
+        }
+    }
     public void setNoFriends(int noFriends) {
         this.noFriends = noFriends;
     }
@@ -215,6 +241,14 @@ public class User {
         return Posts;
     }
 
+    public LinkedList<Group> getGroups() {
+        return Groups;
+    }
+
+    public void setGroups(LinkedList<Group> groups) {
+        Groups = groups;
+    }
+
     public boolean isFriend(User user)
     {
         return Friends.contains(user);
@@ -229,11 +263,12 @@ public class User {
         FirstName=null;
         LastName=null;
         UserName=null;
-        Friends=null;
         Gender=null;
         birthDate=null;
         Posts.clear();
         Posts = null;
         noUsers--;
+        for(User friend : Friends) this.deleteFriend(friend);
+        Friends = null;
     }
 }

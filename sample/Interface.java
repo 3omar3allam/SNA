@@ -90,6 +90,8 @@ public class Interface extends Application {
         System.out.println("saved");
     }
     static BorderPane get_home_layout(){
+        window.setMinWidth(650);
+        window.setMaximized(false);
         layout = new BorderPane();
         layout.setCenter(null);
         layout.setTop(set_header());
@@ -98,7 +100,7 @@ public class Interface extends Application {
         layout.setBottom(set_footer());
         return layout;
     }
-    private static AnchorPane set_header(){
+    static AnchorPane set_header(){
         AnchorPane header = new AnchorPane();
         header.getStyleClass().add("header");
 
@@ -106,13 +108,7 @@ public class Interface extends Application {
         lbl_title.setStyle("-fx-text-fill: aliceblue;    -fx-font-size: 20;    -fx-font-weight: bold;");
         Hyperlink lnk_home = new Hyperlink("HOME");
         lnk_home.getStyleClass().add("headerlink");
-        lnk_home.setOnAction(e -> {
-            try {
-                window.setScene(scene);
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
-        });
+        lnk_home.setOnAction(e ->lnk_home.getScene().setRoot(get_home_layout()));
         header.getChildren().addAll(lbl_title,lnk_home);
         AnchorPane.setTopAnchor(lbl_title,0.0);
         AnchorPane.setTopAnchor(lnk_home,0.0);
@@ -120,7 +116,7 @@ public class Interface extends Application {
         AnchorPane.setRightAnchor(lnk_home,0.0);
         return header;
     }
-    private static AnchorPane set_footer() {
+    static AnchorPane set_footer() {
         AnchorPane footer = new AnchorPane();
 
         Button btn_import = new Button("Import Data");
@@ -152,7 +148,7 @@ public class Interface extends Application {
         footer.getChildren().addAll(btn_import, population);
         return footer;
     }
-    private static GridPane set_search_field(){
+    static GridPane set_search_field(){
         GridPane search_layout = new GridPane();
         search_layout.setVgap(10);
         search_layout.setHgap(5);
@@ -262,7 +258,7 @@ public class Interface extends Application {
         search_layout.getChildren().addAll(lbl_search_user,lbl_search_group,txt_search_user,txt_search_group,lst_results_user,lst_results_group);
         return search_layout;
     }
-    private static VBox set_login_form(){
+    static VBox set_login_form(){
         VBox login_layout = new VBox(10);
 
         HBox hbox = new HBox(5);
@@ -284,7 +280,8 @@ public class Interface extends Application {
                     txt_username.getStyleClass().remove("login_error_field");
                     lbl_error.setVisible(false);
                 }
-                btn_login.getScene().setRoot(new Profile(window,current_user,scene).get_profile_layout(lbl_users,lbl_groups));
+                window.setMaximized(true);
+                btn_login.getScene().setRoot(new Profile(current_user).get_profile_layout());
                 txt_username.setText("");
                 current_user = null;
             }
@@ -324,8 +321,7 @@ public class Interface extends Application {
     }
     private static void createAccount(){
         if(Registration.display("Register")){
-            if(noUsers<2) lbl_users.setText(Integer.toString(noUsers)+" user");
-            else lbl_users.setText(Integer.toString(noUsers) + " users");
+            scene.setRoot(get_home_layout());
         }
     }
     private static void init_Lists() throws Exception {
@@ -337,11 +333,13 @@ public class Interface extends Application {
         allGroupsName = new ArrayList<>(0);
         try{
             new User("3omar3allam","Omar","Allam","male",LocalDate.of(1996,7,7));
+            new User("mohamed","Mohamed","Abd El Salam","male",LocalDate.of(1995,5,1));
         }catch(Exception ignored){}
         //names_generator();
     }
     private static void visit_profile(User profile){
-
+        window.setMinWidth(800);
+        scene.setRoot(new Profile(null).get_profile_layout(profile));
     }
     private static void visit_group(Group group){
 

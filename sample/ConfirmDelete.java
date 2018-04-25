@@ -10,10 +10,9 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class ConfirmBox {
-    private static int answer;
-
-    public static int display(String title,String message){
+public class ConfirmDelete {
+    static boolean answer;
+    public static boolean display(String title,String message){
         Stage window = new Stage();
         window.initModality(Modality.APPLICATION_MODAL);
         window.setTitle(title);
@@ -23,28 +22,22 @@ public class ConfirmBox {
         scene_layout.setAlignment(Pos.CENTER);
         Label label = new Label(message);
 
-        HBox buttons_layout = new HBox(20);
-        Button btn_yes = new Button("save and close");
-        Button btn_no = new Button("close without saving");
-        Button btn_cancel = new Button("cancel");
-        buttons_layout.getChildren().addAll(btn_yes,btn_no,btn_cancel);
-
+        HBox buttons_layout = new HBox(60);
+        Button btn_yes = new Button("YES");
+        Button btn_no = new Button("NO");
+        buttons_layout.getChildren().addAll(btn_yes,btn_no);
+        buttons_layout.setAlignment(Pos.CENTER);
         scene_layout.getChildren().addAll(label,buttons_layout);
 
         btn_yes.setOnAction( e-> {
-            answer = 1;
+            answer = true;
             window.close();
         });
         btn_no.setOnAction( e-> {
-            answer = 0;
+            answer = false;
             window.close();
         });
-        btn_cancel.setOnAction( e-> {
-            answer = -1;
-            window.close();
-        });
-
-        window.setOnCloseRequest( e-> answer = -1);
+        window.setOnCloseRequest( e-> answer = false);
 
         Scene scene = new Scene(scene_layout);
         window.setScene(scene);

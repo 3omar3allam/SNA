@@ -4,24 +4,33 @@ import javafx.scene.control.TextArea;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class Post {
-    private TextArea content;
+    private String content;
     private LocalDateTime time;
-    public Post(TextArea content){
+    private User owner;
+    private int likes;
+    private ArrayList<User> likers;
+
+    public Post(String content){
         this.content = content;
         this.time = LocalDateTime.now();
+        this.likes = 0;
+        this.likers = new ArrayList<>();
     }
-    public Post(TextArea content,LocalDateTime time){
+    public Post(String content,LocalDateTime time){
         this.content = content;
         this.time = time;
+        this.likes = 0;
+        this.likers = new ArrayList<>();
     }
 
-    public TextArea getContent() {
+    public String getContent() {
         return content;
     }
 
-    public void setContent(TextArea content) {
+    public void setContent(String content) {
         this.content = content;
     }
 
@@ -31,5 +40,42 @@ public class Post {
 
     public void setTime(LocalDateTime time) {
         this.time = time;
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+
+    public ArrayList<User> getLikers() {
+        return likers;
+    }
+
+    public void setLikers(ArrayList<User> likers) {
+        this.likers = likers;
+    }
+
+
+    public int getLikes() {
+        return likes;
+    }
+
+    public void setLikes(int likes) {
+        this.likes = likes;
+    }
+
+    public void like(){
+        this.likes++;
+    }
+    public void unlike(){
+        this.likes--;
+    }
+
+    @Override
+    public String toString() {
+        return this.content;
     }
 }
