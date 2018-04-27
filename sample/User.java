@@ -36,7 +36,7 @@ public class User {
     private String FirstName;
     private String LastName;
     private String UserName;              //Unique username for login
-    private LinkedList<User> Friends;     //List of all friends of the user
+    private ArrayList<User> Friends;     //List of all friends of the user
     private int noFriends;
     private int noPosts;
     private LinkedList<Post> Posts;
@@ -60,7 +60,7 @@ public class User {
         else Gender = sample.gender.female;
         addToList(this); //implemented in usefulFunctions class
         Posts = new LinkedList<>();
-        Friends = new LinkedList<>();
+        Friends = new ArrayList<>();
         Groups = new LinkedList<>();
         newID++;
         noUsers++;
@@ -81,7 +81,7 @@ public class User {
         newID++;
         noUsers++;
         Posts = new LinkedList<>();
-        Friends = new LinkedList<>();
+        Friends = new ArrayList<>();
         Groups = new LinkedList<>();
     }
 
@@ -97,7 +97,7 @@ public class User {
         noPosts = copyUser.getNoPosts();
         addToList(this);
         Posts = new LinkedList<>(copyUser.getPosts());
-        Friends = new LinkedList<>(copyUser.getFriends());
+        Friends = new ArrayList<>(copyUser.getFriends());
         Groups = new LinkedList<>(copyUser.getGroups());
         newID++;
         noUsers++;
@@ -156,11 +156,11 @@ public class User {
         return UserName;
     }
 
-    public LinkedList<User> getFriends() {
+    public ArrayList<User> getFriends() {
         return Friends;
     }
 
-    public void setFriends(LinkedList<User> friends) {
+    public void setFriends(ArrayList<User> friends) {
         Friends = friends;
         noFriends=friends.size();
     }
@@ -180,12 +180,14 @@ public class User {
         return Period.between(birthDate,LocalDate.now()).getYears();
     }
     ////////*********other functions***********//////////////
-    public void addFriend(User user)
-    {
+
+    public void addFriend(User user) throws Exception {
         if(!this.Friends.contains(user)) {
-            Friends.add(user);
+            int index = name_index(Friends,0,Friends.size(),user);
+            Friends.add(index,user);
             noFriends++;
-            user.getFriends().add(this);
+            index = name_index(user.Friends,0,user.Friends.size(),user);
+            user.getFriends().add(index,this);
             user.setNoFriends(user.getNoFriends()+1);
         }
     }

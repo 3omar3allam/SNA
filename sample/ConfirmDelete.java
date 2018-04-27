@@ -23,8 +23,8 @@ public class ConfirmDelete {
         Label label = new Label(message);
 
         HBox buttons_layout = new HBox(60);
-        Button btn_yes = new Button("YES");
-        Button btn_no = new Button("NO");
+        Button btn_yes = new Button("Yes");
+        Button btn_no = new Button("No");
         buttons_layout.getChildren().addAll(btn_yes,btn_no);
         buttons_layout.setAlignment(Pos.CENTER);
         scene_layout.getChildren().addAll(label,buttons_layout);

@@ -14,21 +14,30 @@ public class Group {
     static ArrayList<Group> allGroupsID;   // Vector of all users sorted by ID
     static ArrayList<Group> allGroupsName;   // Vector of all users sorted by Name
     static int noGroups;
-
     private static int currentID=0;
     public static Queue<Integer> availableIDs;   //m3mlthash int 3shan tala3 error :D
     private String Name;
     private int ID;
-    private LinkedList<User> Members;
+    private ArrayList<User> Members;
     private int noMembers;
-
+    private User admin;
     ////////////**********Constructors**********/////////
     public Group(String name,User admin)throws Exception {
         Name = name;
         if(!availableIDs.isEmpty())ID=availableIDs.remove();
         else ID=currentID;
-        Members = new LinkedList<>();
+        Members = new ArrayList<>();
         Members.add(admin);
+        addToList(this);
+        noGroups++;
+        currentID++;
+        this.admin = admin;
+    }
+    public Group(String name,ArrayList<User> m)throws Exception {
+        Name = name;
+        if(!availableIDs.isEmpty())ID=availableIDs.remove();
+        else ID=currentID;
+        Members = m;
         addToList(this);
         noGroups++;
         currentID++;
@@ -60,11 +69,11 @@ public class Group {
         return ID;
     }
 
-    public List<User> getMembers() {
+    public ArrayList<User> getMembers() {
         return Members;
     }
 
-    public void setMembers(LinkedList<User> members) {
+    public void setMembers(ArrayList<User> members) {
         Members = members; noMembers=members.size();
     }
 
@@ -72,8 +81,17 @@ public class Group {
         return noMembers;
     }
 
+    public User getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(User admin) {
+        this.admin = admin;
+    }
+
     public  void addMember(User user)
     {
+
         Members.add(user);
         noMembers++;
     }

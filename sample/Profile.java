@@ -35,6 +35,7 @@ class Profile {
             layout.setRight(set_timeline(user));
             layout.setBottom(set_footer(user));
             layout.setLeft(set_search(user));
+            if(user==online_user)layout.setCenter(setRecommendation(user));
         }
         else{
             layout.setTop(Interface.set_header());
@@ -48,7 +49,6 @@ class Profile {
     private AnchorPane set_header(User user) {
         AnchorPane header = new AnchorPane();
         header.getStyleClass().add("header");
-
         Label lbl_title = new Label("Social-Networks");
         lbl_title.setStyle("-fx-text-fill: aliceblue;    -fx-font-size: 20;    -fx-font-weight: bold;");
         Hyperlink lnk_profile = new Hyperlink(this.online_user.getFirstName().toUpperCase());
@@ -66,6 +66,20 @@ class Profile {
         header.getChildren().addAll(lbl_title,hb_header_links);
         return header;
     }
+    private HBox setRecommendation (User user)
+    {   HBox hbox=new HBox();
+        Button btn_createNewGroup=new Button() ;
+        btn_createNewGroup.setText("Create new Group");
+        hbox.getChildren().add(btn_createNewGroup);
+        btn_createNewGroup.setOnAction(e -> {
+            if(CreateGroup.display("Create Group",online_user)){
+                btn_createNewGroup.getScene().setRoot(get_profile_layout(user));
+            }
+        });
+
+        return hbox;
+    }
+
     private HBox set_timeline(User user){
         VBox timeline = new VBox(20);
 
@@ -139,7 +153,9 @@ class Profile {
                 lst_posts.setVisible(false);
                 Button btn_add_friend = new Button("Add Friend");
                 btn_add_friend.setOnAction(e->{
-                    this.online_user.addFriend(user);
+                    try {
+                        this.online_user.addFriend(user);
+                    } catch (Exception ignored) {}
                     btn_add_friend.getScene().setRoot(get_profile_layout(user));
                 });
                 GridPane.setConstraints(btn_add_friend,0,3);

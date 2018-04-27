@@ -125,3 +125,28 @@
     -fx-alignment: center;
     -fx-padding: 5;
 }
+.group_registration_form{
+    -fx-background-color: linear-gradient(navy,blue,lightseagreen,lightseagreen,lightblue,aliceblue);
+    -fx-alignment: center;
+    -fx-padding: 30px 25px;
+}
+.group_registration_error_label{
+    -fx-text-fill: darkred;
+    -fx-font-weight: bold;
+}
+.chbox_friends{
+    -fx-min-height: 10px;
+    -fx-max-height: 150px;
+    -fx-background-color: transparent;
+    -fx-text-fill: black;
+    -fx-font-weight: 800;
+    -fx-font-size: 1.2em;
+}
+.chbox_friends .list-cell{
+    -fx-background-color: transparent;
+    -fx-background-insets: 2px 2px;
+}
+.chbox_friends .list-cell:empty{
+    -fx-background-color: transparent;
+    -fx-background-insets: 0px 0px;
+}

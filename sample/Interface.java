@@ -51,14 +51,12 @@ public class Interface extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        init_Lists();
         window = primaryStage;
         window.setTitle("Social-Networks");
-
         scene = new Scene(get_home_layout(),650,400);
         scene.getStylesheets().add("style/style.css");
         window.setScene(scene);
-
+        init_Lists();
         window.show();
         /*window.setOnCloseRequest( e -> {
             e.consume();
@@ -331,11 +329,11 @@ public class Interface extends Application {
         Group.availableIDs = new LinkedList<>();
         allGroupsID = new ArrayList<>(0);
         allGroupsName = new ArrayList<>(0);
-        try{
-            new User("3omar3allam","Omar","Allam","male",LocalDate.of(1996,7,7));
-            new User("mohamed","Mohamed","Abd El Salam","male",LocalDate.of(1995,5,1));
-        }catch(Exception ignored){}
-        //names_generator();
+//        try{
+//            new User("3omar3allam","Omar","Allam","male",LocalDate.of(1996,7,7));
+//            new User("mohamed","Mohamed","Abd El Salam","male",LocalDate.of(1995,5,1));
+//        }catch(Exception ignored){}
+        names_generator();
     }
     private static void visit_profile(User profile){
         window.setMinWidth(800);
@@ -355,11 +353,9 @@ public class Interface extends Application {
             }
             String name = name_builder.toString();
             try{
-                addToList(new User(name,name,name));
-            }catch(Exception ignored){
-
-            }
+                addToList(new User(name,name,name,"male",LocalDate.of(1996,7,7)));
+            }catch(Exception ignored){}
         }
-        noUsers = allUsersID.size();
+        scene.setRoot(get_home_layout());
     }
 }

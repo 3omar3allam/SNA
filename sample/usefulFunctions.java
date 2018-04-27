@@ -87,8 +87,19 @@ public class usefulFunctions {
         else return groupID_index(arr, mid + 1, end, ID);
     }
 
-
-
+    /* for duplicate allowed lists */
+    static int name_index(ArrayList<User> arr, int start, int end, User user) throws Exception {
+        if (start >= end) {
+            return start;
+        }
+        int mid = (start + end - 1) / 2;
+        int username_compare = user.getUserName().compareTo(arr.get(mid).getUserName());
+        if(username_compare == 0)throw new NameException("User is already a member",null);
+        int name_compare = user.getName().compareTo(arr.get(mid).getName());
+        if (name_compare == 0) return mid;
+        else if (name_compare < 0) return name_index(arr, start, mid, user);
+        else return name_index(arr, mid + 1, end, user);
+    }
 
     static void addToList(User user)throws Exception {
         int index;
@@ -105,12 +116,12 @@ public class usefulFunctions {
     static void addToList(Group group) throws Exception {
         int index;
         String name = group.getName();
-        index = groupName_index(allGroupsName,0,allUsersName.size(),name);
+        index = groupName_index(allGroupsName,0,allGroupsName.size(),name);
         if(index==-1) throw new GroupNameException("group name already exists");
         else allGroupsName.add(index, group);
         int id=group.getID();
-        index= groupID_index(allGroupsID,0,allUsersID.size(),id);
-        if(index==-1); //userID duplication (impossible)
+        index= groupID_index(allGroupsID,0,allGroupsID.size(),id);
+        if(index==-1); //groupID duplication (impossible)
         else allGroupsID.add(index, group);
     }
 
@@ -133,8 +144,9 @@ public class usefulFunctions {
     }
 
     public static void group_graph_search(User source, ObservableList<Group> matching_names, String name){ //add the results to the observable list
-
+        matching_names.addAll(allGroupsName);
     }
+
 
 }
 
