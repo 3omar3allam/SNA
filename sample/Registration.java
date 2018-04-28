@@ -29,9 +29,9 @@ public class Registration {
 
     private static ObservableList<Integer> years,days;
     private static ObservableList<String> months;
-    private static boolean success = false;
+    private static User user = null;
 
-    public static boolean display(String title){
+    public static User display(String title){
 
         int this_year = LocalDate.now().getYear();
         years = FXCollections.observableArrayList();
@@ -102,11 +102,11 @@ public class Registration {
         Button btn_cancel = new Button("Cancel");
         btn_cancel.setAlignment(Pos.CENTER_RIGHT);
         btn_cancel.setOnAction(e-> {
-            success = false;
+            user = null;
             window.close();
         });
         window.setOnCloseRequest(e->{
-            success = false;
+            user = null;
         });
         GridPane.setConstraints(lbl_title,0,0,2,1);
         GridPane.setConstraints(txt_username,0,1);
@@ -187,8 +187,7 @@ public class Registration {
             }
             if(done){
                 try{
-                    new User(username,fname,lname,gender,LocalDate.of(year,month,day));
-                    success = true;
+                    user = new User(username,fname,lname,gender,LocalDate.of(year,month,day));
                     window.close();
                 }catch (UsernameException e1){
                     lbl_error.setVisible(true);
@@ -210,7 +209,7 @@ public class Registration {
 
         window.setScene(scene);
         window.showAndWait();
-        return success;
+        return user;
     }
     private static void recover_handled_errors(TextField txt_username,Label lbl_error , TextField txt_fname,TextField txt_lname,
                                                ToggleGroup toggleGroup, RadioButton rbtn_male, RadioButton rbtn_female,

@@ -278,8 +278,8 @@ public class Interface extends Application {
                     txt_username.getStyleClass().remove("login_error_field");
                     lbl_error.setVisible(false);
                 }
+                btn_login.getScene().setRoot(new Profile(current_user).get_page_layout());
                 window.setMaximized(true);
-                btn_login.getScene().setRoot(new Profile(current_user).get_profile_layout());
                 txt_username.setText("");
                 current_user = null;
             }
@@ -318,8 +318,10 @@ public class Interface extends Application {
         }
     }
     private static void createAccount(){
-        if(Registration.display("Register")){
-            scene.setRoot(get_home_layout());
+        User new_user = Registration.display("Register");
+        if(new_user != null) {
+            scene.setRoot(new Profile(new_user).get_page_layout());
+            window.setMaximized(true);
         }
     }
     private static void init_Lists() throws Exception {
@@ -337,10 +339,10 @@ public class Interface extends Application {
     }
     private static void visit_profile(User profile){
         window.setMinWidth(800);
-        scene.setRoot(new Profile(null).get_profile_layout(profile));
+        scene.setRoot(new Profile(null).get_page_layout(profile));
     }
     private static void visit_group(Group group){
-
+        scene.setRoot(new GroupPage(group).get_page_layout());
     }
     private static void names_generator() {
         Random rand = new Random();

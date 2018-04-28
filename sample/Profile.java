@@ -2,6 +2,7 @@ package sample;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
@@ -13,29 +14,37 @@ import javafx.scene.layout.*;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 import static sample.Group.noGroups;
 import static sample.User.noUsers;
 import static sample.usefulFunctions.*;
 import static sample.Interface.*;
+import static sample.GroupPage.*;
 
-class Profile {
+class Profile extends Page {
     private User online_user;
+    private Page calling_page; //el page elly nadahet el profile da (law hasal ya3ni) 3ashan arga3laha 3la tol
 
     Profile(User online_user){
         this.online_user = online_user;
+        this.calling_page = null;
     }
-    BorderPane get_profile_layout(){
-        return get_profile_layout(online_user);
+    Profile(User online_user, Page calling_page){
+        this.online_user = online_user;
+        this.calling_page = calling_page;
     }
-    BorderPane get_profile_layout(User user){
+    BorderPane get_page_layout(){
+        return get_page_layout(online_user);
+    }
+    BorderPane get_page_layout(User user){
         BorderPane layout = new BorderPane();
         if(online_user!=null){
             layout.setTop(set_header(user));
             layout.setRight(set_timeline(user));
             layout.setBottom(set_footer(user));
             layout.setLeft(set_search(user));
-            if(user==online_user)layout.setCenter(setRecommendation(user));
+            layout.setCenter(set_friends_and_groups(user));
         }
         else{
             layout.setTop(Interface.set_header());
@@ -51,12 +60,15 @@ class Profile {
         header.getStyleClass().add("header");
         Label lbl_title = new Label("Social-Networks");
         lbl_title.setStyle("-fx-text-fill: aliceblue;    -fx-font-size: 20;    -fx-font-weight: bold;");
+
         Hyperlink lnk_profile = new Hyperlink(this.online_user.getFirstName().toUpperCase());
         lnk_profile.getStyleClass().add("headerlink");
-        lnk_profile.setOnAction(e ->lnk_profile.getScene().setRoot(get_profile_layout()));
+        lnk_profile.setOnAction(e ->lnk_profile.getScene().setRoot(get_page_layout()));
+
         Hyperlink lnk_logout = new Hyperlink("Log Out");
         lnk_logout.getStyleClass().add("headerlink");
         lnk_logout.setOnAction(e-> lnk_logout.getScene().setRoot(get_home_layout()));
+
         HBox hb_header_links = new HBox(2);
         hb_header_links.getChildren().addAll(lnk_profile,lnk_logout);
         AnchorPane.setLeftAnchor(lbl_title,0.0);
@@ -65,19 +77,6 @@ class Profile {
         AnchorPane.setTopAnchor(hb_header_links,0.0);
         header.getChildren().addAll(lbl_title,hb_header_links);
         return header;
-    }
-    private HBox setRecommendation (User user)
-    {   HBox hbox=new HBox();
-        Button btn_createNewGroup=new Button() ;
-        btn_createNewGroup.setText("Create new Group");
-        hbox.getChildren().add(btn_createNewGroup);
-        btn_createNewGroup.setOnAction(e -> {
-            if(CreateGroup.display("Create Group",online_user)){
-                btn_createNewGroup.getScene().setRoot(get_profile_layout(user));
-            }
-        });
-
-        return hbox;
     }
 
     private HBox set_timeline(User user){
@@ -96,7 +95,7 @@ class Profile {
         if(this.online_user == user) {
             TextArea txt_new_post = new TextArea();
             txt_new_post.getStyleClass().add("new_post");
-            txt_new_post.setPromptText("What's on your mind, " + this.online_user.getFirstName());
+            txt_new_post.setPromptText("What's on your mind, " + this.online_user.getFirstName()+"?");
 
             AnchorPane buttons = new AnchorPane();
             Button btn_post = new Button("Post");
@@ -143,7 +142,7 @@ class Profile {
                 btn_remove_friend.setOnAction(e->{
                     if(ConfirmDelete.display("Remove Friend","Are you sure you want to remove "+user.getFirstName()+"?")){
                         this.online_user.deleteFriend(user);
-                        btn_remove_friend.getScene().setRoot(get_profile_layout(user));
+                        btn_remove_friend.getScene().setRoot(get_page_layout(user));
                     }
                 });
                 GridPane.setConstraints(btn_remove_friend,0,3);
@@ -156,7 +155,7 @@ class Profile {
                     try {
                         this.online_user.addFriend(user);
                     } catch (Exception ignored) {}
-                    btn_add_friend.getScene().setRoot(get_profile_layout(user));
+                    btn_add_friend.getScene().setRoot(new Profile(this.online_user,this).get_page_layout(user));
                 });
                 GridPane.setConstraints(btn_add_friend,0,3);
                 info.getChildren().add(btn_add_friend);
@@ -345,12 +344,12 @@ class Profile {
 
         lst_results_user.setOnMouseClicked( e->{
             User selected_user = lst_results_user.getSelectionModel().getSelectedItem();
-            lst_results_user.getScene().setRoot(get_profile_layout(selected_user));
+            lst_results_user.getScene().setRoot(new Profile(this.online_user,this).get_page_layout(selected_user));
         });
 
         lst_results_group.setOnMouseClicked( e->{
             Group selected_group = lst_results_group.getSelectionModel().getSelectedItem();
-            //visit_group(selected_group);
+            lst_results_group.getScene().setRoot(new GroupPage(selected_group,this).get_page_layout(this.online_user));
         });
 
         GridPane.setConstraints(lbl_search_user,0,0);
@@ -362,5 +361,191 @@ class Profile {
 
         search_layout.getChildren().addAll(lbl_search_user,lbl_search_group,txt_search_user,txt_search_group,lst_results_user,lst_results_group);
         return search_layout;
+    }
+    private VBox set_friends_and_groups(User user){
+        VBox container = new VBox(20);
+        container.setPadding(new Insets(25));
+
+        GridPane friends_container = new GridPane();
+        friends_container.setVgap(20);
+        friends_container.setHgap(15);
+        friends_container.getStyleClass().add("friends_container");
+
+        Label lbl_friends = new Label();
+        lbl_friends.setText("Friends ("+user.getNoFriends()+")");
+        lbl_friends.setStyle("-fx-font-weight: bold; -fx-font-size: 15;");
+        friends_container.add(lbl_friends,0,0);
+        if(user.getNoFriends() != 0) {
+            String[] colors = {"grey","lightblue"};
+            ObservableList<Hyperlink> ov_friends = FXCollections.observableArrayList();
+            int index = 0;
+            for (User friend : user.getFriends()) {
+                Hyperlink link = new Hyperlink(friend.getName());
+                String color = colors[index % 2];
+                link.getStyleClass().add("friend_in_list");
+                link.setStyle("-fx-background-color: " + color + ";");
+                link.setOnAction(e-> link.getScene().setRoot(new Profile(this.online_user,this).get_page_layout(friend)));
+                ov_friends.add(link);
+                index++;
+            }
+            ListView<Hyperlink> lst_friends = new ListView<>();
+            lst_friends.getStyleClass().add("friends");
+            lst_friends.setOrientation(Orientation.HORIZONTAL);
+            lst_friends.setItems(ov_friends);
+            friends_container.add(lst_friends,0,1,2,1);
+        }
+        else{
+            Label lbl_null_friends = new Label();
+            if(user == this.online_user)lbl_null_friends.setText("Your friend list is still empty.");
+            else lbl_null_friends.setText(user.getFirstName()+"'s friend list is still empty.");
+            lbl_null_friends.setStyle("-fx-alignment: center;-fx-font-weight: bold");
+            friends_container.add(lbl_null_friends,0,1,2,1);
+        }
+        container.getChildren().add(friends_container);
+
+        GridPane groups_container = new GridPane();
+        groups_container.setVgap(20);
+        groups_container.setHgap(15);
+        groups_container.getStyleClass().add("friends_container");
+
+        Label lbl_groups = new Label();
+        lbl_groups.setText("Groups ("+user.getNoGroups()+")");
+        lbl_groups.setStyle("-fx-font-weight: bold; -fx-font-size: 15;");
+        groups_container.add(lbl_groups,0,0);
+
+        if(user.getNoGroups() != 0) {
+            String[] colors = {"grey","lightblue"};
+            ObservableList<Hyperlink> ov_groups = FXCollections.observableArrayList();
+            int index = 0;
+            for (Group group : user.getGroups()) {
+                Hyperlink link = new Hyperlink(group.getName());
+                String color = colors[index % 2];
+                link.getStyleClass().add("friend_in_list");
+                link.setStyle("-fx-background-color: " + color + ";");
+                link.setOnAction(e-> link.getScene().setRoot(new GroupPage(group,this).get_page_layout(this.online_user)));
+                ov_groups.add(link);
+                index++;
+            }
+            ListView<Hyperlink> lst_groups = new ListView<>();
+            lst_groups.getStyleClass().add("friends");
+            lst_groups.setOrientation(Orientation.HORIZONTAL);
+            lst_groups.setItems(ov_groups);
+            groups_container.add(lst_groups,0,1,2,1);
+
+            if(user == this.online_user) {
+                Button btn_create_group = new Button("Create new group");
+                btn_create_group.setStyle("-fx-alignment: center");
+                btn_create_group.setOnAction(e -> {
+                    Group new_group = CreateGroup.display("Create group", this.online_user);
+                    if (new_group != null) {
+                        btn_create_group.getScene().setRoot(new GroupPage(new_group,this).get_page_layout(this.online_user));
+                    }
+                });
+                groups_container.add(btn_create_group,1,2);
+            }
+        }
+        else{
+            Label lbl_null_groups = new Label();
+            if(user == this.online_user)lbl_null_groups.setText("You haven't joined any groups yet.");
+            else lbl_null_groups.setText(user.getFirstName()+" hasn't joined any groups yet.");
+            lbl_null_groups.setStyle("-fx-alignment: center;-fx-font-weight: bold");
+            groups_container.add(lbl_null_groups,0,1,2,1);
+
+            if(user == this.online_user) {
+                Button btn_create_group = new Button("Create new group");
+                btn_create_group.setStyle("-fx-alignment: center");
+                btn_create_group.setOnAction(e -> {
+                    Group new_group = CreateGroup.display("Create group", this.online_user);
+                    if (new_group != null) {
+                        btn_create_group.getScene().setRoot(new GroupPage(new_group,this).get_page_layout(this.online_user));
+                    }
+                });
+                groups_container.add(btn_create_group,0,2,2,1);
+            }
+        }
+        container.getChildren().add(groups_container);
+
+
+        if(user == this.online_user) {
+            GridPane user_recommendation_container = new GridPane();
+            user_recommendation_container.setVgap(20);
+            user_recommendation_container.setHgap(15);
+            user_recommendation_container.getStyleClass().add("friends_container");
+
+            Label lbl_user_recommendations = new Label();
+            lbl_user_recommendations.setText("People you may know");
+            lbl_user_recommendations.setStyle("-fx-font-weight: bold; -fx-font-size: 15;");
+            user_recommendation_container.add(lbl_user_recommendations, 0, 0);
+
+            ArrayList<User> recommended_friends = new ArrayList<>();
+            ArrayList<Integer> mutual_friends = new ArrayList<>();
+            get_friends_recommendations(user, recommended_friends, mutual_friends);
+
+            lbl_user_recommendations.setText(lbl_user_recommendations.getText()+" ("+recommended_friends.size()+")");
+
+            if (recommended_friends.size() != 0) {
+                String[] colors = {"grey", "lightblue"};
+                ObservableList<Hyperlink> ov_friends = FXCollections.observableArrayList();
+                int index = 0;
+                for (User friend : recommended_friends) {
+                    Hyperlink link = new Hyperlink();
+                    int mutual = mutual_friends.get(index);
+                    if(mutual == 1)link.setText(friend.getName() + "\n(one mutual friend)");
+                    else link.setText(friend.getName() + "\n(" + mutual_friends.get(index) + " mutual friends)");
+                    String color = colors[index % 2];
+                    link.getStyleClass().add("friend_in_list");
+                    link.setStyle("-fx-background-color: " + color + ";");
+                    link.setOnAction(e -> link.getScene().setRoot(new Profile(this.online_user, this).get_page_layout(friend)));
+                    ov_friends.add(link);
+                    index++;
+                }
+                ListView<Hyperlink> lst_friends = new ListView<>();
+                lst_friends.getStyleClass().add("friends");
+                lst_friends.setOrientation(Orientation.HORIZONTAL);
+                lst_friends.setItems(ov_friends);
+                user_recommendation_container.add(lst_friends, 0, 1, 2, 1);
+                container.getChildren().add(user_recommendation_container);
+            }
+
+            GridPane group_recommendation_container = new GridPane();
+            group_recommendation_container.setVgap(20);
+            group_recommendation_container.setHgap(15);
+            group_recommendation_container.getStyleClass().add("friends_container");
+
+            Label lbl_group_recommendations = new Label();
+            lbl_group_recommendations.setText("Groups you may be interested");
+            lbl_group_recommendations.setStyle("-fx-font-weight: bold; -fx-font-size: 15;");
+            group_recommendation_container.add(lbl_group_recommendations, 0, 0);
+
+            ArrayList<Group> recommended_groups = new ArrayList<>();
+            mutual_friends = new ArrayList<>();
+            get_groups_recommendations(user, recommended_groups, mutual_friends);
+            lbl_group_recommendations.setText(lbl_group_recommendations.getText()+" ("+recommended_groups.size()+")");
+
+            if (recommended_groups.size() != 0) {
+                String[] colors = {"grey", "lightblue"};
+                ObservableList<Hyperlink> ov_groups = FXCollections.observableArrayList();
+                int index = 0;
+                for (Group group : recommended_groups) {
+                    Hyperlink link = new Hyperlink();
+                    int mutual = mutual_friends.get(index);
+                    if(mutual == 1)link.setText(group.getName() + "\n(one friend)");
+                    else link.setText(group.getName() + "\n(" + mutual_friends.get(index) + " friends)");
+                    String color = colors[index % 2];
+                    link.getStyleClass().add("friend_in_list");
+                    link.setStyle("-fx-background-color: " + color + ";");
+                    link.setOnAction(e -> link.getScene().setRoot(new GroupPage(group, this).get_page_layout(this.online_user)));
+                    ov_groups.add(link);
+                    index++;
+                }
+                ListView<Hyperlink> lst_friends = new ListView<>();
+                lst_friends.getStyleClass().add("friends");
+                lst_friends.setOrientation(Orientation.HORIZONTAL);
+                lst_friends.setItems(ov_groups);
+                group_recommendation_container.add(lst_friends, 0, 1, 2, 1);
+                container.getChildren().add(group_recommendation_container);
+            }
+        }
+        return container;
     }
 }

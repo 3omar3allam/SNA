@@ -32,6 +32,7 @@ public class Group {
         noGroups++;
         currentID++;
         this.admin = admin;
+        this.admin.getGroups().add(this);
     }
     public Group(String name,ArrayList<User> m)throws Exception {
         Name = name;
@@ -41,6 +42,10 @@ public class Group {
         addToList(this);
         noGroups++;
         currentID++;
+        for(User user:this.Members){
+            user.getGroups().add(this);
+            user.setNoGroups(user.getNoGroups()+1);
+        }
     }
 
     /////////////*******String Function used to save into csv file**********/

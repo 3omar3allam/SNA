@@ -27,8 +27,8 @@ import java.util.LinkedList;
 import static sample.usefulFunctions.*;
 
 public class CreateGroup {
-    private static boolean success = false;
-    public static boolean display(String title,User admin) {
+    private static Group group = null;
+    public static Group display(String title,User admin) {
         final BooleanProperty firstTime = new SimpleBooleanProperty(true); // Variable to store the focus on stage load
         Stage window = new Stage();
 
@@ -98,8 +98,8 @@ public class CreateGroup {
             }
             if(done){
                 try{
-                    new Group(groupname,members);
-                    success = true;
+                    group = new Group(groupname,members);
+                    group.setAdmin(admin);
                     window.close();
                 }catch (GroupNameException e1){
                     lbl_error.setVisible(true);
@@ -111,10 +111,10 @@ public class CreateGroup {
             }
         });
         btn_cancel.setOnAction(e->{
-            success = false;
+            group = null;
             window.close();
         });
-        window.setOnCloseRequest(e-> success=false);
+        window.setOnCloseRequest(e-> group = null);
 
         txt_groupname.focusedProperty().addListener((observable,  oldValue,  newValue) -> {
             if(newValue && firstTime.get()){
@@ -128,7 +128,7 @@ public class CreateGroup {
         window.setMinWidth(350);
         window.setScene(scene);
         window.showAndWait();
-        return success;
+        return group;
     }
     private static void recover_handled_errors(TextField txt_groupname,Label lbl_error )
     {

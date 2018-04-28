@@ -3,6 +3,7 @@ package sample;
 import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static sample.User.allUsersID;
 import static sample.User.allUsersName;
@@ -144,9 +145,23 @@ public class usefulFunctions {
     }
 
     public static void group_graph_search(User source, ObservableList<Group> matching_names, String name){ //add the results to the observable list
+        /*da code testing eb2a shelo*/
         matching_names.addAll(allGroupsName);
     }
 
+    public static void get_friends_recommendations(User source, ArrayList<User> recommended_friends, ArrayList<Integer> mutual_friends){
+        //3ayz 2osad kol user fel list el 2ola be nafs el index el mutual friends fel list el tanya :D
+        //law mafesh mutual raga3 zero ew3a ttlakhbat fel indeces wenaby ana mesh mehandelha :D
+
+        /*da code testing eb2a shelo*/
+        recommended_friends.addAll(allUsersName);
+        while(mutual_friends.size() < recommended_friends.size())mutual_friends.add(0);
+    }
+    public static void get_groups_recommendations(User source, ArrayList<Group> recommended_groups, ArrayList<Integer> mutual_friends){
+        //nafs el kalam b2a
+        recommended_groups.addAll(allGroupsName);
+        while(mutual_friends.size() < recommended_groups.size())mutual_friends.add(0);
+    }
 
 }
 

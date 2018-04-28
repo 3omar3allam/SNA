@@ -38,6 +38,7 @@ public class User {
     private String UserName;              //Unique username for login
     private ArrayList<User> Friends;     //List of all friends of the user
     private int noFriends;
+    private int noGroups;
     private int noPosts;
     private LinkedList<Post> Posts;
     private LinkedList<Group> Groups;
@@ -52,6 +53,7 @@ public class User {
         UserName = userName;
         this.noFriends = 0;
         this.noPosts = 0;
+        this.noGroups = 0;
         if(!availableIDs.isEmpty())ID=availableIDs.remove();
         else ID=newID;
         this.birthDate = LocalDate.of(birthDate.getYear(),birthDate.getMonth(),birthDate.getDayOfMonth());
@@ -75,6 +77,7 @@ public class User {
         LastName = lastName;
         noFriends=0;
         noPosts = 0;
+        noGroups = 0;
         addToList(this);
         if(!availableIDs.isEmpty())ID=availableIDs.remove();
         else ID=newID;
@@ -95,6 +98,7 @@ public class User {
         LastName=copyUser.getLastName();
         noFriends=copyUser.getNoFriends();
         noPosts = copyUser.getNoPosts();
+        noGroups = copyUser.getNoGroups();
         addToList(this);
         Posts = new LinkedList<>(copyUser.getPosts());
         Friends = new ArrayList<>(copyUser.getFriends());
@@ -227,6 +231,16 @@ public class User {
             post.unlike();
         }
     }
+
+
+    public int getNoGroups() {
+        return noGroups;
+    }
+
+    public void setNoGroups(int noGroups) {
+        this.noGroups = noGroups;
+    }
+
     public void setNoFriends(int noFriends) {
         this.noFriends = noFriends;
     }
