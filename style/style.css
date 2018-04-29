@@ -166,6 +166,27 @@
     -fx-max-height: 200;
     -fx-padding: 5px;
 }
+.members_container{
+    -fx-background-color: white;
+    -fx-background-radius: 3px;
+    -fx-border-width: 1px;
+    -fx-border-radius: 3px;
+    -fx-border-color: black;
+    -fx-min-width: 500px;
+    -fx-max-width: 500px;
+    -fx-min-height: 150;
+    -fx-max-height: 200;
+    -fx-padding: 5px;
+}
+.members{
+    -fx-min-width: 450px ;
+    -fx-max-width: 450px;
+    -fx-min-height: 100px;
+    -fx-max-height: 100px;
+    -fx-background-color: white;
+
+}
+
 .friends{
     -fx-min-width: 280px ;
     -fx-max-width: 290px;
@@ -188,6 +209,15 @@
     -fx-min-height: 50;
     -fx-max-height: 50;
     -fx-min-width: 40;
+    -fx-background-radius: 5px;
+    -fx-underline: false;
+    -fx-text-fill: black;
+    -fx-text-alignment: center;
+}
+.members_in_list{
+    -fx-min-height: 120;
+    -fx-max-height: 150;
+    -fx-min-width: 100;
     -fx-background-radius: 5px;
     -fx-underline: false;
     -fx-text-fill: black;
