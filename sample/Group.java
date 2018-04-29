@@ -19,7 +19,9 @@ public class Group {
     private String Name;
     private int ID;
     private ArrayList<User> Members;
+    private LinkedList<Post> Posts;
     private int noMembers;
+    private int noPosts;
     private User admin;
     ////////////**********Constructors**********/////////
     public Group(String name,User admin)throws Exception {
@@ -29,8 +31,10 @@ public class Group {
         Members = new ArrayList<>();
         Members.add(admin);
         addToList(this);
+        Posts = new LinkedList<>();
         noGroups++;
         currentID++;
+        noMembers=1;
         this.admin = admin;
         this.admin.getGroups().add(this);
     }
@@ -41,6 +45,8 @@ public class Group {
         Members = m;
         addToList(this);
         noGroups++;
+        noMembers=m.size();
+        Posts = new LinkedList<>();
         currentID++;
         for(User user:this.Members){
             user.getGroups().add(this);
@@ -61,6 +67,49 @@ public class Group {
     }
     //////////////******setters and getters******////////////
 
+
+    public int getNoPosts() {
+        return noPosts;
+    }
+
+    public void setNoPosts(int noPosts) {
+        this.noPosts = noPosts;
+    }
+    public Post addPost(String content,User user){
+        Post post = new Post(content);
+        if(Posts == null) Posts = new LinkedList<>();
+        Posts.add(post);
+        noPosts++;
+        post.setOwner(user);
+        return post;
+    }
+
+    public void deletePost(Post post){
+        Posts.remove(post);
+        noPosts--;
+    }
+
+    public void likePost(Post post,User user){
+        if(!post.getLikers().contains(this)) {
+            post.getLikers().add(user);
+            post.like();
+        }
+    }
+
+    public void unlikePost(Post post,User user) {
+        if (post.getLikers().contains(user)) {
+            post.getLikers().remove(user);
+            post.unlike();
+        }
+    }
+
+    public LinkedList<Post> getPosts() {
+        return Posts;
+    }
+
+    public void setPosts(LinkedList<Post> posts) {
+        Posts = posts;
+    }
 
     public String getName() {
         return Name;
@@ -99,6 +148,7 @@ public class Group {
 
         Members.add(user);
         noMembers++;
+        user.getGroups().add(this);
     }
 
     public void removeMember(User user)
@@ -107,20 +157,35 @@ public class Group {
             Members.remove(user);
             noMembers--;
         }
+        user.getGroups().remove(this);
     }
 
     public  boolean isMember(User user)
     {
         return Members.contains(user);
     }
+    public  boolean isAdmin(User user)
+    {
+        return admin==user;
+    }
 
     public void delete(){
-        allGroupsID.remove(ID);
+        int id = ID;
+        try{
+        allGroupsID.remove(id);}
+        catch(IndexOutOfBoundsException e)
+        {
+
+        }
         allGroupsName.remove(this);
+        for (User member : Members) {
+            member.getGroups().remove(this);
+            member.setNoGroups(member.getNoGroups()-1);
+        }
         Members.clear();
         Name = null;
         Members = null;
-        availableIDs.add(ID);
+        availableIDs.add(id);
         noGroups--;
     }
 

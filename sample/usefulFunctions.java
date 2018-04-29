@@ -1,6 +1,7 @@
 package sample;
 
 import javafx.collections.ObservableList;
+import javafx.scene.layout.GridPane;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -144,6 +145,7 @@ public class usefulFunctions {
         matching_names.addAll(allUsersName);
     }
 
+
     public static void group_graph_search(User source, ObservableList<Group> matching_names, String name){ //add the results to the observable list
         /*da code testing eb2a shelo*/
         matching_names.addAll(allGroupsName);
@@ -162,6 +164,45 @@ public class usefulFunctions {
         recommended_groups.addAll(allGroupsName);
         while(mutual_friends.size() < recommended_groups.size())mutual_friends.add(0);
     }
+    public static void search_group_members(Group group, ObservableList<User> Foundmembers, String partName) {
+        int size=partName.length();
+        Foundmembers.clear();
+        for(User member: group.getMembers())
+        {
+            if(member.getName().length()>=size) {
+                if (member.getName().substring(0, size ).equals(partName)) {
+                    if(!group.isAdmin(member))Foundmembers.add(member);
+                    continue;
+                }
+            }
+            if(member.getLastName().length()>=size)
+                if(member.getLastName().substring(0, size).equals(partName))
+            {
+                if(!group.isAdmin(member))Foundmembers.add(member);
+            }
+        }
+
+    }
+    public static void search_user_friends(User user, ObservableList<User> Foundmembers, String partName,Group group) {
+        int size=partName.length();
+        Foundmembers.clear();
+        for(User member: user.getFriends())
+        {
+            if(member.getName().length()>=size) {
+                if (member.getName().substring(0, size ).equals(partName)) {
+                    if(!group.isMember(member)){Foundmembers.add(member);
+                    continue;}
+                }
+            }
+            if(member.getLastName().length()>=size)
+                if(member.getLastName().substring(0, size).equals(partName))
+                {
+                    if(!group.isMember(member)){Foundmembers.add(member);}
+                }
+        }
+
+    }
+
 
 }
 

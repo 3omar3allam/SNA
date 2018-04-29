@@ -22,7 +22,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import sun.plugin.javascript.navig.Anchor;
+
 
 import java.awt.*;
 import java.io.BufferedReader;
