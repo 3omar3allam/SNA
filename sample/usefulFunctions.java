@@ -131,14 +131,12 @@ public class usefulFunctions {
         //law 3ayz tezawed arguments e3mel interfacing w endah function tanya mattala3sh den omy :D
         //feel free enak traga3ha fadya law mafesh results .. mesh hyhsal errors
 
-        //khaly el code da el condition bta3ak .. 3ashan di matching wana basearch mesh shart ykon el esmo kollo
         /*
-        int lengh = name.length();
-        if( (length <= found_first_name_in_search && name == found_first_name_in_search.substring(0,length))
-            || (length <= found_last_name_in_search && name == found_first_name_in_search.substring(0,length)) )
-                <yeb2a hoto fel list>
+            khaly balak enak btsearch 3la goz2 men el name mesh el name nafso
+            < bos 3la tare2t el parsing elly fe function search_group_members() >
 
-         */
+            < khaly el search case insensitive matnsash >
+        */
 
 
         /*da code testing eb2a shelo*/
@@ -164,43 +162,35 @@ public class usefulFunctions {
         recommended_groups.addAll(allGroupsName);
         while(mutual_friends.size() < recommended_groups.size())mutual_friends.add(0);
     }
-    public static void search_group_members(Group group, ObservableList<User> Foundmembers, String partName) {
+    public static void search_group_members(User user,Group group, ObservableList<User> Foundmembers, String partName) {
         int size=partName.length();
         Foundmembers.clear();
         for(User member: group.getMembers())
         {
-            if(member.getName().length()>=size) {
-                if (member.getName().substring(0, size ).equals(partName)) {
-                    if(!group.isAdmin(member))Foundmembers.add(member);
-                    continue;
-                }
+            if(member.getName().length()>=size && member.getName().substring(0, size ).toLowerCase().equals(partName.toLowerCase())) {
+                    if(member == user)continue;
+                    Foundmembers.add(member);
             }
-            if(member.getLastName().length()>=size)
-                if(member.getLastName().substring(0, size).equals(partName))
+            else if(member.getLastName().length()>=size && member.getLastName().substring(0, size).toLowerCase().equals(partName.toLowerCase()))
             {
-                if(!group.isAdmin(member))Foundmembers.add(member);
+                if(member == user)continue;
+                Foundmembers.add(member);
             }
         }
-
     }
     public static void search_user_friends(User user, ObservableList<User> Foundmembers, String partName,Group group) {
         int size=partName.length();
         Foundmembers.clear();
         for(User member: user.getFriends())
         {
-            if(member.getName().length()>=size) {
-                if (member.getName().substring(0, size ).equals(partName)) {
-                    if(!group.isMember(member)){Foundmembers.add(member);
-                    continue;}
-                }
+            if(member.getName().length()>=size && member.getName().substring(0, size).toLowerCase().equals(partName.toLowerCase())) {
+                if(!group.isMember(member))Foundmembers.add(member);
             }
-            if(member.getLastName().length()>=size)
-                if(member.getLastName().substring(0, size).equals(partName))
+            else if(member.getLastName().length()>=size && member.getLastName().substring(0, size).toLowerCase().equals(partName.toLowerCase()))
                 {
                     if(!group.isMember(member)){Foundmembers.add(member);}
                 }
         }
-
     }
 
 

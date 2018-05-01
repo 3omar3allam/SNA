@@ -179,8 +179,8 @@ public class Interface extends Application {
                 lst_results_user.setVisible(true);
                 for (User user : allUsersName){
                     int length = newValue.length();
-                    if((length <= user.getFirstName().length() && user.getFirstName().toLowerCase().substring(0,length).equals(newValue.toLowerCase()))
-                    || (length <= user.getFirstName().length() && user.getLastName().toLowerCase().substring(0,length).equals(newValue.toLowerCase())))
+                    if((length <= user.getName().length() && user.getName().toLowerCase().substring(0,length).equals(newValue.toLowerCase()))
+                    || (length <= user.getLastName().length() && user.getLastName().toLowerCase().substring(0,length).equals(newValue.toLowerCase())))
                         matching_names.add(user);
                 }
 

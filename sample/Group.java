@@ -3,7 +3,6 @@ package sample;
 import javafx.scene.control.Label;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -38,20 +37,20 @@ public class Group {
         this.admin = admin;
         this.admin.getGroups().add(this);
     }
-    public Group(String name,ArrayList<User> m)throws Exception {
+    public Group(String name,ArrayList<User> members)throws Exception {
         Name = name;
         if(!availableIDs.isEmpty())ID=availableIDs.remove();
         else ID=currentID;
-        Members = m;
         addToList(this);
         noGroups++;
-        noMembers=m.size();
+        noMembers=0;
         Posts = new LinkedList<>();
         currentID++;
-        for(User user:this.Members){
-            user.getGroups().add(this);
-            user.setNoGroups(user.getNoGroups()+1);
+        Members = new ArrayList<>();
+        for(User user: members){
+            this.addMember(user);
         }
+        members.clear();
     }
 
     /////////////*******String Function used to save into csv file**********/
@@ -145,10 +144,10 @@ public class Group {
 
     public  void addMember(User user)
     {
-
         Members.add(user);
         noMembers++;
         user.getGroups().add(this);
+        user.setNoGroups(user.getNoGroups()+1);
     }
 
     public void removeMember(User user)
@@ -156,8 +155,9 @@ public class Group {
         if (Members.contains(user)) {
             Members.remove(user);
             noMembers--;
+            user.getGroups().remove(this);
+            user.setNoGroups(user.getNoGroups()-1);
         }
-        user.getGroups().remove(this);
     }
 
     public  boolean isMember(User user)
