@@ -51,7 +51,7 @@ public class PostsDataBase {
         writeInFile();
     }
     public static void writeInFile() {
-        Root.put("Users", Users);
+        Root.put("Posts", PostsOfUser);
 
         // create the file
         try (PrintWriter writer = new PrintWriter(file)) {
