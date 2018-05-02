@@ -36,7 +36,6 @@ public class User {
     private LinkedList<Group> Groups;
 
     //******************* Constructors******************//
-
     public User(String userName,String firstName,String lastName, String gender, LocalDate birthDate)throws Exception {
         if(!firstName.matches("\\w[(\\w|\\s)]*")) throw new NameException("Invalid ",new Throwable("first name"));
         if(!lastName.matches("\\w[(\\w|\\s)]*")) throw new NameException("Invalid ",new Throwable("last name"));
@@ -105,11 +104,10 @@ public class User {
 
     @Override
     public String toString(){
-        StringBuilder buffer = new StringBuilder(UserName);
+        StringBuilder buffer = new StringBuilder("\""+UserName+"\"");
 
         return buffer.toString();
     }
-
 
 
     ////////////****** getters and setters*************////////////
@@ -204,7 +202,13 @@ public class User {
         noPosts++;
         post.setOwner(this);
         return post;
-}
+    }
+
+    public void  addPost(Post p){
+
+        Posts.add(p);
+    }
+
 
     public void deletePost(Post post){
         Posts.remove(post);

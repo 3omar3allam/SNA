@@ -20,10 +20,13 @@ import java.util.LinkedList;
 import java.util.Random;
 
 import static sample.Group.*;
+import static sample.PostsDataBase.ReadPost;
+import static sample.PostsDataBase.WritePosts;
 import static sample.User.*;
+import static sample.UsersDataBase.ReadFromFile;
+import static sample.UsersDataBase.WriteUsers;
 import static sample.usefulFunctions.addToList;
 import static sample.usefulFunctions.userNameBinarySearch;
-import static sample.PostsDataBase.WritePosts;
 
 
 public class Interface extends Application {
@@ -71,10 +74,10 @@ public class Interface extends Application {
         System.out.println(line);
     }
     private static void save(){
-        //System.out.println("saved");
-      //  WriteUsers();
-       // ReadFromFile();
+        System.out.println("saved");
+        WriteUsers();
         WritePosts();
+
     }
     static BorderPane get_home_layout(){
         window.setMinWidth(650);
@@ -168,8 +171,8 @@ public class Interface extends Application {
                 lst_results_user.setVisible(true);
                 for (User user : allUsersName){
                     int length = newValue.length();
-                    if((length <= user.getFirstName().length() && user.getFirstName().toLowerCase().substring(0,length).equals(newValue.toLowerCase()))
-                    || (length <= user.getFirstName().length() && user.getLastName().toLowerCase().substring(0,length).equals(newValue.toLowerCase())))
+                    if((length <= user.getName().length() && user.getName().toLowerCase().substring(0,length).equals(newValue.toLowerCase()))
+                    || (length <= user.getLastName().length() && user.getLastName().toLowerCase().substring(0,length).equals(newValue.toLowerCase())))
                         matching_names.add(user);
                 }
 
@@ -320,12 +323,14 @@ public class Interface extends Application {
         Group.availableIDs = new LinkedList<>();
         allGroupsID = new ArrayList<>(0);
         allGroupsName = new ArrayList<>(0);
-
 //        try{
 //            new User("3omar3allam","Omar","Allam","male",LocalDate.of(1996,7,7));
 //            new User("mohamed","Mohamed","Abd El Salam","male",LocalDate.of(1995,5,1));
 //        }catch(Exception ignored){}
-      //  names_generator();
+       // names_generator();
+          ReadFromFile();
+         ReadPost();
+
     }
     private static void visit_profile(User profile){
         window.setMinWidth(800);
@@ -344,11 +349,10 @@ public class Interface extends Application {
                 name_builder.append((char)c);
             }
             String name = name_builder.toString();
-
-          try{
-            addToList(new User(name,name,name,"male",LocalDate.of(1996,7,7)));
-        }catch(Exception ignored){}
+            try{
+                addToList(new User(name,name,name,"male",LocalDate.of(1996,7,7)));
+            }catch(Exception ignored){}
+        }
         scene.setRoot(get_home_layout());
-    }
     }
 }

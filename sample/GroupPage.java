@@ -57,7 +57,7 @@ public class GroupPage extends Page {
         Label lbl_title = new Label("Social-Networks");
         lbl_title.setStyle("-fx-text-fill: aliceblue;    -fx-font-size: 20;    -fx-font-weight: bold;");
 
-        Hyperlink lnk_profile = new Hyperlink(this.online_user.getName().toUpperCase());
+        Hyperlink lnk_profile = new Hyperlink(this.online_user.getFirstName().toUpperCase());
         lnk_profile.getStyleClass().add("headerlink");
         lnk_profile.setOnAction(e ->lnk_profile.getScene().setRoot(calling_page.get_page_layout(this.online_user)));
 
@@ -138,7 +138,7 @@ public class GroupPage extends Page {
 
             TextArea txt_new_post = new TextArea();
             txt_new_post.getStyleClass().add("new_post");
-            txt_new_post.setPromptText("What's on your mind, " + this.online_user.getFirstName()+"?");
+            txt_new_post.setPromptText(String.format("What's on your mind, %s?" ,this.online_user.getFirstName()));
 
             AnchorPane buttons = new AnchorPane();
             Button btn_post = new Button("Post");
@@ -260,13 +260,13 @@ public class GroupPage extends Page {
         container.setPadding(new Insets(25));
 
         GridPane members_container = new GridPane();
-        members_container.setVgap(20);
+        members_container.setVgap(10);
         members_container.setHgap(15);
-        members_container.getStyleClass().add("members_container");
-        Label lbl_title = new Label("Welcome to Group "+ group.getName());
+        members_container.getStyleClass().add("friends_container");
+        Label lbl_title = new Label(String.format("Welcome to %s", group.getName()));
         lbl_title.setStyle("-fx-text-fill: grey;    -fx-font-size: 20;    -fx-font-weight: bold;");
         Label lbl_members = new Label();
-        lbl_members.setText("Members of The Group ("+group.getNoMembers()+")");
+        lbl_members.setText(String.format("Members (%s)",group.getNoMembers()));
         lbl_members.setStyle("-fx-font-weight: bold; -fx-font-size: 15;");
         members_container.add(lbl_members,0,0);
         if(group.getNoMembers() != 0) {
@@ -275,17 +275,28 @@ public class GroupPage extends Page {
             int index = 0;
             for (User member : group.getMembers()) {
                 Hyperlink link ;
-                if(group.isAdmin(member)){ link = new Hyperlink(member.getName()+"\n The Admin");}
+                if(group.isAdmin(member)){ link = new Hyperlink(String.format("%s\n(ADMIN)",member.getName()));}
                 else { link = new Hyperlink(member.getName());}
                 String color = colors[index % 2];
-                link.getStyleClass().add("members_in_list");
-                link.setStyle("-fx-background-color: " + color + ";");
-                link.setOnAction(e-> link.getScene().setRoot(new Profile(this.online_user,this).get_page_layout(member)));
+                link.getStyleClass().add("friend_in_list");
+                link.setStyle(String.format("-fx-background-color: %s;",color));
+                link.setOnAction(e-> {
+                    if(this.online_user == group.getAdmin()) {
+                        int answer = PromptMemberSelection.display("What do you want to do", member, group);
+                        if (answer == 1)
+                            link.getScene().setRoot(new Profile(this.online_user, this).get_page_layout(member));
+                        else if (answer == 2) {
+                            group.removeMember(member);
+                            link.getScene().setRoot(get_page_layout(online_user));
+                        }
+                    }
+                    else link.getScene().setRoot(new Profile(this.online_user, this).get_page_layout(member));
+                });
                 ov_members.add(link);
                 index++;
             }
             ListView<Hyperlink> lst_friends = new ListView<>();
-            lst_friends.getStyleClass().add("members");
+            lst_friends.getStyleClass().add("friends");
             lst_friends.setOrientation(Orientation.HORIZONTAL);
             lst_friends.setItems(ov_members);
             members_container.add(lst_friends,0,1,10,1);
@@ -296,12 +307,12 @@ public class GroupPage extends Page {
 
         /////////////////////////////////////////////////////////////////////////////////////////////
         GridPane friends_container = new GridPane();
-        friends_container.setVgap(20);
+        friends_container.setVgap(10);
         friends_container.setHgap(15);
-        friends_container.getStyleClass().add("members_container");
+        friends_container.getStyleClass().add("friends_container");
 
         Label lbl_friends = new Label();
-        lbl_friends.setText("Add Friends to The Group by Clicking them");
+        lbl_friends.setText("Invite Friends");
         lbl_friends.setStyle("-fx-font-weight: bold; -fx-font-size: 15;");
         friends_container.add(lbl_friends,0,0);
         if(this.online_user.getNoFriends() != 0) {
@@ -314,8 +325,8 @@ public class GroupPage extends Page {
                     allFriendsAreIn=false;
                     Hyperlink link = new Hyperlink(friend.getName());
                     String color = colors[index % 2];
-                    link.getStyleClass().add("members_in_list");
-                    link.setStyle("-fx-background-color: " + color + ";");
+                    link.getStyleClass().add("friend_in_list");
+                    link.setStyle(String.format("-fx-background-color: %s;", color));
                     link.setOnAction(e -> {group.addMember(friend);link.getScene().setRoot(get_page_layout(online_user));});
                     ov_friends.add(link);
                     index++;
@@ -324,13 +335,13 @@ public class GroupPage extends Page {
             if(allFriendsAreIn)
             {
                 Label lbl_null_friends = new Label();
-                lbl_null_friends.setText("All Your Friends are Already members ");
+                lbl_null_friends.setText("All your friends are already members ");
                 lbl_null_friends.setStyle("-fx-alignment: center;-fx-font-weight: bold");
                 friends_container.add(lbl_null_friends,0,2,2,1);
             }
             else {
                 ListView<Hyperlink> lst_friends = new ListView<>();
-                lst_friends.getStyleClass().add("members");
+                lst_friends.getStyleClass().add("friends");
                 lst_friends.setOrientation(Orientation.HORIZONTAL);
                 lst_friends.setItems(ov_friends);
                 friends_container.add(lst_friends, 0, 1, 2, 1);
@@ -349,7 +360,7 @@ public class GroupPage extends Page {
         search_layout.setHgap(5);
         search_layout.getStyleClass().add("search_form");
 
-        Label lbl_search_user = new Label("Find Members");
+        Label lbl_search_user = new Label("Find members");
         lbl_search_user.setStyle("-fx-font-weight: bold; -fx-alignment: center-left");
         TextField txt_search_user = new TextField();
         txt_search_user.setPromptText("Search...");
@@ -368,7 +379,7 @@ public class GroupPage extends Page {
             }
             else {
                 lst_results_user.setVisible(true);
-                search_group_members(group, matching_names, newValue);
+                search_group_members(online_user,group, matching_names, newValue);
                 if (matching_names.isEmpty()) lst_results_user.setVisible(false);
                 else {
                     lst_results_user.setCellFactory(e -> new ListCell<User>() {
@@ -390,7 +401,16 @@ public class GroupPage extends Page {
         });
         lst_results_user.setOnMouseClicked( e->{
             User selected_user = lst_results_user.getSelectionModel().getSelectedItem();
-            lst_results_user.getScene().setRoot(calling_page.get_page_layout(selected_user));
+            if(this.online_user == group.getAdmin()) {
+                int answer = PromptMemberSelection.display("What do you want to do", selected_user, group);
+                if (answer == 1)
+                    lst_results_user.getScene().setRoot(new Profile(this.online_user, this).get_page_layout(selected_user));
+                else if (answer == 2) {
+                    group.removeMember(selected_user);
+                    lst_results_user.getScene().setRoot(get_page_layout(online_user));
+                }
+            }
+            else lst_results_user.getScene().setRoot(new Profile(this.online_user, this).get_page_layout(selected_user));
         });
         GridPane.setConstraints(lbl_search_user,0,0);
         GridPane.setConstraints(txt_search_user,0,1);
@@ -403,7 +423,7 @@ public class GroupPage extends Page {
         search_layout2.setHgap(5);
         search_layout2.getStyleClass().add("search_form");
 
-        Label lbl_search_user2 = new Label("Add A Friend to The Group");
+        Label lbl_search_user2 = new Label("Add friend to the group");
         lbl_search_user2.setStyle("-fx-font-weight: bold; -fx-alignment: center-left");
         TextField txt_search_user2 = new TextField();
         txt_search_user2.setPromptText("Search...");
@@ -454,65 +474,6 @@ public class GroupPage extends Page {
         container.getChildren().addAll(search_layout2);
         HBox AllSearch =new HBox(3);
         AllSearch.getChildren().addAll(search_layout,search_layout2);
-        if(this.online_user==group.getAdmin())
-        {
-            GridPane search_layout3 = new GridPane();
-            search_layout3.setVgap(10);
-            search_layout3.setHgap(5);
-            search_layout3.getStyleClass().add("search_form");
-
-            Label lbl_search_user3 = new Label("Remove A Member from group");
-            lbl_search_user3.setStyle("-fx-font-weight: bold; -fx-alignment: center-left");
-            TextField txt_search_user3 = new TextField();
-            txt_search_user3.setPromptText("Search...");
-            txt_search_user3.getStyleClass().add("search_field");
-
-            ListView<User> lst_results_user3 = new ListView<>();
-            lst_results_user3.setVisible(false);
-            lst_results_user3.getStyleClass().add("search_results");
-
-            txt_search_user3.textProperty().addListener((ov,oldValue,newValue) -> {
-                ObservableList<User> matching_names = FXCollections.observableArrayList();
-                lst_results_user3.setItems(matching_names);
-                if(newValue.equals("")) {
-                    matching_names.clear();
-                    lst_results_user3.setVisible(false);
-                }
-                else {
-                    lst_results_user3.setVisible(true);
-                    search_group_members(group, matching_names, newValue);
-                    if (matching_names.isEmpty()) lst_results_user3.setVisible(false);
-                    else {
-                        lst_results_user3.setCellFactory(e -> new ListCell<User>() {
-                            @Override
-                            protected void updateItem(User item, boolean empty) {
-                                super.updateItem(item, empty);
-
-                                if (empty || item == null || item.getName() == null) {
-                                    setText(null);
-                                } else {
-                                    setText(item.getName());
-                                }
-                            }
-                        });
-
-                    }
-                }
-
-            });
-            lst_results_user3.setOnMouseClicked( e->{
-                User selected_user = lst_results_user3.getSelectionModel().getSelectedItem();
-                group.removeMember(selected_user);
-                lst_results_user2.getScene().setRoot(get_page_layout(online_user));
-            });
-            GridPane.setConstraints(lbl_search_user3,0,0);
-            GridPane.setConstraints(txt_search_user3,0,1);
-            GridPane.setConstraints(lst_results_user3,0,2);
-            search_layout3.getChildren().addAll(lbl_search_user3,txt_search_user3,lst_results_user3);
-            AllSearch.getChildren().add(search_layout3);
-
-        }
-
         container.getChildren().addAll(AllSearch);
         return container;
     }

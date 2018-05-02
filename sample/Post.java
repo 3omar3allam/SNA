@@ -10,13 +10,17 @@ public class Post {
     private int likes;
     private ArrayList<User> likers;
 
-    static ArrayList<Post> allPosts;   // Vector of all posts
-
     public Post(String content){
         this.content = content;
         this.time = LocalDateTime.now();
         this.likes = 0;
         this.likers = new ArrayList<>();
+    }
+    public Post(String content,LocalDateTime t,int NoOfLikes,ArrayList<User> likers){
+        this.content = content;
+        this.time = t;
+        this.likes = NoOfLikes;
+        this.likers = likers;
     }
     public Post(String content,LocalDateTime time){
         this.content = content;

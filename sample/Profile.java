@@ -197,12 +197,12 @@ class Profile extends Page {
             if(post.getLikers().contains(user)) lnk_like.setText("Unlike");
             lnk_like.setOnAction(e->{
                 if(lnk_like.getText().equals("Like")){
-                    user.likePost(post);
+                    this.online_user.likePost(post);
                     lnk_like.setText("Unlike");
                     lbl_nolikes.setText(Integer.toString(post.getLikes())+" liked this post");
                 }
                 else if(lnk_like.getText().equals("Unlike")){
-                    user.unlikePost(post);
+                    this.online_user.unlikePost(post);
                     lnk_like.setText("Like");
                     lbl_nolikes.setText(Integer.toString(post.getLikes())+" liked this post");
                 }
@@ -367,7 +367,7 @@ class Profile extends Page {
         container.setPadding(new Insets(25));
 
         GridPane friends_container = new GridPane();
-        friends_container.setVgap(20);
+        friends_container.setVgap(10);
         friends_container.setHgap(15);
         friends_container.getStyleClass().add("friends_container");
 
@@ -404,7 +404,7 @@ class Profile extends Page {
         container.getChildren().add(friends_container);
 
         GridPane groups_container = new GridPane();
-        groups_container.setVgap(20);
+        groups_container.setVgap(10);
         groups_container.setHgap(15);
         groups_container.getStyleClass().add("friends_container");
 
@@ -434,14 +434,14 @@ class Profile extends Page {
 
             if(user == this.online_user) {
                 Button btn_create_group = new Button("Create new group");
-                btn_create_group.setStyle("-fx-alignment: center");
+                btn_create_group.setStyle("-fx-alignment: center;");
                 btn_create_group.setOnAction(e -> {
                     Group new_group = CreateGroup.display("Create group", this.online_user);
                     if (new_group != null) {
                         btn_create_group.getScene().setRoot(new GroupPage(new_group,this).get_page_layout(this.online_user));
                     }
                 });
-                groups_container.add(btn_create_group,1,2);
+                groups_container.add(btn_create_group,0,2);
             }
         }
         else{
@@ -468,7 +468,7 @@ class Profile extends Page {
 
         if(user == this.online_user) {
             GridPane user_recommendation_container = new GridPane();
-            user_recommendation_container.setVgap(20);
+            user_recommendation_container.setVgap(10);
             user_recommendation_container.setHgap(15);
             user_recommendation_container.getStyleClass().add("friends_container");
 
@@ -481,7 +481,7 @@ class Profile extends Page {
             ArrayList<Integer> mutual_friends = new ArrayList<>();
             get_friends_recommendations(user, recommended_friends, mutual_friends);
 
-            lbl_user_recommendations.setText(lbl_user_recommendations.getText()+" ("+recommended_friends.size()+")");
+            lbl_user_recommendations.setText(String.format("%s (%d)",lbl_user_recommendations.getText(),recommended_friends.size()));
 
             if (recommended_friends.size() != 0) {
                 String[] colors = {"grey", "lightblue"};
@@ -508,7 +508,7 @@ class Profile extends Page {
             }
 
             GridPane group_recommendation_container = new GridPane();
-            group_recommendation_container.setVgap(20);
+            group_recommendation_container.setVgap(10);
             group_recommendation_container.setHgap(15);
             group_recommendation_container.getStyleClass().add("friends_container");
 

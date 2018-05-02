@@ -90,7 +90,6 @@ public class UsersDataBase {
                 String First_Name = tempUser.get("First Name").toString();
                 String User_Name = tempUser.get("User Name").toString();
                 String Last_Name = tempUser.get("Last Name").toString();
-
                 String Gender = tempUser.get("Gender").toString();
 
                 try {
