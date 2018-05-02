@@ -1,0 +1,7 @@
+## Commited changes: 
+
+1-You can Comment the  ReadFromFile();  ReadPost(); in line (331,332) in init_Lists function and WriteUsers(); WritePosts(); in line (77,78) in save function in interface file 
+2-You can unComment the  Name_Ganerator in line (330) in init_Lists function in interface and continue as you used to.
+3-I have changed the toString function in the User class.
+4-I have add on more function called addPost to the user class that take post as an argument you can find it in line (207).
+5-I have add on more constructor to the Post class that take post all post attributes as arguments you can find it in line (19).
