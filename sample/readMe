@@ -5,3 +5,7 @@
 3-I have changed the toString function in the User class.
 4-I have add on more function called addPost to the user class that take post as an argument you can find it in line (207).
 5-I have add on more constructor to the Post class that take post all post attributes as arguments you can find it in line (19).
+
+
+
+**to Download JSON JAR :https://stackoverflow.com/questions/1051640/correct-way-to-add-external-jars-lib-jar-to-an-intellij-idea-project
