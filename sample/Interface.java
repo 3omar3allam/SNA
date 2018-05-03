@@ -20,6 +20,8 @@ import java.util.LinkedList;
 import java.util.Random;
 
 import static sample.Group.*;
+import static sample.GroupDataBase.ReadGroupFromFile;
+import static sample.GroupDataBase.WriteGroup;
 import static sample.PostsDataBase.ReadPost;
 import static sample.PostsDataBase.WritePosts;
 import static sample.User.*;
@@ -77,6 +79,7 @@ public class Interface extends Application {
         System.out.println("saved");
         WriteUsers();
         WritePosts();
+        WriteGroup();
 
     }
     static BorderPane get_home_layout(){
@@ -328,9 +331,11 @@ public class Interface extends Application {
 //            new User("mohamed","Mohamed","Abd El Salam","male",LocalDate.of(1995,5,1));
 //        }catch(Exception ignored){}
        // names_generator();
-          ReadFromFile();
-         ReadPost();
+         ReadFromFile();
 
+        ReadGroupFromFile();
+
+        ReadPost();
     }
     private static void visit_profile(User profile){
         window.setMinWidth(800);

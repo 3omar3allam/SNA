@@ -13,14 +13,18 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Scanner;
 
+import static sample.Group.allGroupsID;
 import static sample.User.allUsersID;
 import static sample.User.allUsersName;
+import static sample.usefulFunctions.groupNameBinarySearch;
 import static sample.usefulFunctions.userNameBinarySearch;
 
 public class PostsDataBase {
     private static JSONObject Root = new JSONObject();
     private static JSONArray Users = new JSONArray();
     private static JSONArray PostsOfUser = new JSONArray();
+    private static JSONArray Groups = new JSONArray();
+    private static JSONArray PostsOFGroups = new JSONArray();
 
     private static File file = new File("C:\\Users\\Ali Badawy\\Desktop\\Posts.json");
 
@@ -52,11 +56,40 @@ public class PostsDataBase {
             }
             Users.add(PostsOfUser);
         }
+        for (int i = 0; i < allGroupsID.size(); i++) {
+            LinkedList<Post> GroupPosts = allGroupsID.get(i).getPosts();
+            for (int j = 0; j < GroupPosts.size(); j++) {
+                //declaring variables
+
+                JSONObject postObject = new JSONObject();
+                String PostContent = GroupPosts.get(j).getContent();
+                User owner = GroupPosts.get(j).getOwner();
+                String OwnerUserName = owner.getUserName();
+                Group Group = allGroupsID.get(i);
+                String GroupName = Group.getName();
+
+                int NoOfLikes = GroupPosts.get(j).getLikes();
+                ArrayList<User> likers = GroupPosts.get(j).getLikers();
+
+
+                postObject.put("Post Date", GroupPosts.get(j).getTime().toString());
+                postObject.put("Post Content", PostContent);
+                postObject.put("Post Owner", OwnerUserName);
+                postObject.put("Number of Likes", NoOfLikes);
+                postObject.put("Array of Likers", likers);
+                postObject.put("Group Name", GroupName);
+
+
+                PostsOFGroups.add(postObject);
+            }
+            Groups.add(PostsOFGroups);
+        }
         writeInFile();
     }
 
     public static void writeInFile() {
-        Root.put("Posts", PostsOfUser);
+        Root.put("User Posts", PostsOfUser);
+        Root.put("Groups Posts", PostsOFGroups);
 
         // create the file
         try (PrintWriter writer = new PrintWriter(file)) {
@@ -75,16 +108,20 @@ public class PostsDataBase {
             while (input.hasNextLine()) {
                 JSONin.append(input.nextLine());
             }
+
             //start parsing
             JSONParser parser = new JSONParser();
             JSONObject tempRoot = (JSONObject) parser.parse(JSONin.toString());
+
+
+            /***posts of Users***/
             //creating the posts array
-            JSONArray tempPostArray = (JSONArray) tempRoot.get("Posts");
-          //  System.out.println(tempPostArray.toJSONString());
+            JSONArray tempUsersPostArray = (JSONArray) tempRoot.get("User Posts");
+            //  System.out.println(tempPostArray.toJSONString());
             //traverse on the array posts
-            for (int i = 0; i < tempPostArray.size(); i++) {
+            for (int i = 0; i < tempUsersPostArray.size(); i++) {
                 //get the temporary post
-                JSONObject tempPost = (JSONObject) tempPostArray.get(i);
+                JSONObject tempPost = (JSONObject) tempUsersPostArray.get(i);
                 //get post content
                 String content = (String) tempPost.get("Post Content");
                 //get the post owner userName
@@ -93,10 +130,10 @@ public class PostsDataBase {
                 String owner = (allUsersID.get(indexOfOwner)).getUserName();
                 User U_owner = (allUsersID.get(indexOfOwner));
                 //get number of likes
-                long  NoOfLikes = (long) tempPost.get("Number of Likes");
+                long NoOfLikes = (long) tempPost.get("Number of Likes");
                 //create liker array
                 ArrayList<User> likers = new ArrayList<User>();
-                //get array of date of the post
+
                 JSONArray tempLikersList = (JSONArray) tempPost.get("Array of Likers");
                 //for loop for all likers
                 for (int j = 0; j < tempLikersList.size(); j++) {
@@ -108,27 +145,83 @@ public class PostsDataBase {
                 }
                 // get the time of posting
 
-                String [] time=  tempPost.get("Post Date").toString().split("T");
-                String Date1=time[0];
-                String[]Date=Date1.split("-");
+                String[] time = tempPost.get("Post Date").toString().split("T");
+                String Date1 = time[0];
+                String[] Date = Date1.split("-");
                 int year = Integer.parseInt(Date[0]);
                 int month = Integer.parseInt(Date[1]);
                 int day = Integer.parseInt(Date[2]);
-                String clock1=time[1];
-                String[]clock=clock1.split(":");
+                String clock1 = time[1];
+                String[] clock = clock1.split(":");
                 int h = Integer.parseInt(clock[0]);
                 int m = Integer.parseInt(clock[1]);
                 double s = Double.parseDouble(clock[2]);
 
-                LocalDateTime timeAndDate ;
-                timeAndDate= LocalDateTime.of(year,month,day,h,m, (int) s);
+                LocalDateTime timeAndDate;
+                timeAndDate = LocalDateTime.of(year, month, day, h, m, (int) s);
                 Post Post = new Post(content);
                 Post.setOwner(allUsersID.get(indexOfOwner));
-                Post.setLikes((int)NoOfLikes);
+                Post.setLikes((int) NoOfLikes);
                 Post.setTime(timeAndDate);
                 Post.setLikers(likers);
                 U_owner.addPost(Post);
+            }
 
+
+                  /***posts of Groups***/
+            JSONArray tempGroupPosts = (JSONArray) tempRoot.get("Groups Posts");
+            //traverse on the array
+            for (int i = 0; i < tempGroupPosts.size(); i++) {
+                //get temp post
+                JSONObject tempPost = (JSONObject) tempGroupPosts.get(i);
+                //get post content
+                String content = (String) tempPost.get("Post Content");
+                //get the post Owner UserName
+                String OwnerUserName = (String) tempPost.get("Post Owner");
+                int indexOfOwner = userNameBinarySearch(allUsersID, 0, allUsersID.size(), OwnerUserName);
+                String owner = (allUsersID.get(indexOfOwner)).getUserName();
+                User U_owner = (allUsersID.get(indexOfOwner));
+                //get number of likes
+                long NoOfLikes = (long) tempPost.get("Number of Likes");
+                //create liker array
+                ArrayList<User> likers = new ArrayList<User>();
+                JSONArray tempLikersList = (JSONArray) tempPost.get("Array of Likers");
+                //for loop for all likers
+                for (int j = 0; j < tempLikersList.size(); j++) {
+                    String tempFriendString = (String) tempLikersList.get(j);
+                    //get the index of the liker
+                    int indexOfLiker = userNameBinarySearch(allUsersID, 0, allUsersID.size(), tempFriendString);
+                    //add to liker list
+                    likers.add(allUsersID.get(indexOfLiker));
+                }
+                // get the time of posting
+
+                String[] time = tempPost.get("Post Date").toString().split("T");
+                String Date1 = time[0];
+                String[] Date = Date1.split("-");
+                int year = Integer.parseInt(Date[0]);
+                int month = Integer.parseInt(Date[1]);
+                int day = Integer.parseInt(Date[2]);
+                String clock1 = time[1];
+                String[] clock = clock1.split(":");
+                int h = Integer.parseInt(clock[0]);
+                int m = Integer.parseInt(clock[1]);
+                double s = Double.parseDouble(clock[2]);
+
+                LocalDateTime timeAndDate;
+                timeAndDate = LocalDateTime.of(year, month, day, h, m, (int) s);
+
+                String GroupName = (String) tempPost.get("Group Name");
+                int indexOfGroup = groupNameBinarySearch(allGroupsID, 0, allGroupsID.size(), GroupName);
+                String groupName = (allGroupsID.get(indexOfOwner)).getName();
+                Group G_group = (allGroupsID.get(indexOfGroup));
+
+                Post GroupPost = new Post(content);
+                GroupPost.setOwner(U_owner);
+                GroupPost.setLikes((int) NoOfLikes);
+                GroupPost.setTime(timeAndDate);
+                GroupPost.setLikers(likers);
+                G_group.addPost(GroupPost);
 
             }
 

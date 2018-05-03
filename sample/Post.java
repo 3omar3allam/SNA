@@ -79,6 +79,7 @@ public class Post {
 
     @Override
     public String toString() {
-        return this.content;
+        StringBuilder buffer = new StringBuilder(this.content);
+        return buffer.toString();
     }
 }

@@ -282,6 +282,12 @@ public class User {
         Posts = null;
         noUsers--;
         for(User friend : Friends) this.deleteFriend(friend);
+        for(Group group: Groups){
+            if(group.getAdmin()==this) group.delete();
+            else group.removeMember(this);
+        }
+        Groups.clear();
+        Groups = null;
         Friends = null;
     }
 }

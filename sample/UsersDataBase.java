@@ -39,7 +39,7 @@ public class UsersDataBase {
             userObject.put("Number of Friends", allUsersID.get(i).getNoFriends());
             userObject.put("List Of Friends", allUsersID.get(i).getFriends());
             userObject.put("Number of Groups", allUsersID.get(i).getNoGroups());
-            userObject.put("List of Groups", allUsersID.get(i).getGroups().toString());
+            userObject.put("List of Groups", allUsersID.get(i).getGroups());
             userObject.put("Number Of Posts", allUsersID.get(i).getNoPosts());
             //   userObject.put("List of Posts", allUsersID.get(i).getPosts().toString());
 

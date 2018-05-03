@@ -5,10 +5,6 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 
 import java.time.LocalDate;
@@ -17,10 +13,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import static sample.Group.noGroups;
+import static sample.Interface.get_home_layout;
 import static sample.User.noUsers;
 import static sample.usefulFunctions.*;
-import static sample.Interface.*;
-import static sample.GroupPage.*;
 
 class Profile extends Page {
     private User online_user;
@@ -194,7 +189,7 @@ class Profile extends Page {
         else{
             Hyperlink lnk_like = new Hyperlink("Like");
             lnk_like.getStyleClass().add("post_link");
-            if(post.getLikers().contains(user)) lnk_like.setText("Unlike");
+            if(post.getLikers().contains(this.online_user)) lnk_like.setText("Unlike");
             lnk_like.setOnAction(e->{
                 if(lnk_like.getText().equals("Like")){
                     this.online_user.likePost(post);

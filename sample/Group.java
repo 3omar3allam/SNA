@@ -1,12 +1,10 @@
 package sample;
 
-import javafx.scene.control.Label;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import static sample.usefulFunctions.*;
+import static sample.usefulFunctions.addToList;
 
 public class Group {
 
@@ -57,11 +55,8 @@ public class Group {
 
     @Override
     public String toString() {
-        StringBuilder buffer= new StringBuilder(ID +
-                "," + Name);
-        for (int i = 0; i <noMembers ; i++) {
-            buffer.append(",").append(Members.get(i).getID());
-        }
+        StringBuilder buffer= new StringBuilder("\""+Name+"\"");
+
         return buffer.toString();
     }
     //////////////******setters and getters******////////////
@@ -81,6 +76,9 @@ public class Group {
         noPosts++;
         post.setOwner(user);
         return post;
+    }
+    public void addPost(Post P){
+        Posts.add(P);
     }
 
     public void deletePost(Post post){
