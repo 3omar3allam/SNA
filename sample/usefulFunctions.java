@@ -245,7 +245,43 @@ public class usefulFunctions {
 
     public static void get_friends_recommendations(User source, ArrayList<User> recommended_friends, ArrayList<Integer> mutual_friends){
 
-        
+        ArrayList<User> friendsArray=new ArrayList<>();
+        friendsArray=source.getFriends();
+        ArrayList<User> friendsOfFriends=new ArrayList<>();
+        ArrayList<Integer> MutualFriendsNo=new ArrayList<>();
+        for(int i=0;i<friendsArray.size();i++)
+        {
+            ArrayList<User> temp=new ArrayList<>();
+            temp=friendsArray.get(i).getFriends();
+            for(User currentUser:temp)
+            {
+                int id=currentUser.getID();
+                int index= userID_index(friendsOfFriends,0,friendsOfFriends.size(),id);
+                if(index==-1)
+                {
+                    int index2=userIDBinarySearch(friendsOfFriends,0,friendsOfFriends.size(),id);
+                    MutualFriendsNo.set(index2,MutualFriendsNo.get(index2)+1);//userID duplication (impossible)
+                }
+                else if(currentUser!=source)
+                {
+                    friendsOfFriends.add(index, currentUser);
+                    MutualFriendsNo.add(index,0);
+                }
+            }
+        }
+        for(int i=0;i<30;i++)
+        {
+            int max_index=0,max=0;
+            for(int j=0;j<MutualFriendsNo.size();j++)
+            {
+                if(MutualFriendsNo.get(j)>max)
+                {max=MutualFriendsNo.get(j); max_index=j;}
+            }
+            recommended_friends.add(friendsOfFriends.get(max_index));
+            mutual_friends.add(MutualFriendsNo.get(max_index));
+            friendsOfFriends.remove(max_index);
+            MutualFriendsNo.remove(max_index);
+        }
 
     }
 
