@@ -299,11 +299,21 @@ public class Interface extends Application {
         btn_create.setOnAction( e -> createAccount());
         btn_create.setMaxWidth(Integer.MAX_VALUE);
 
-        login_layout.getChildren().addAll(hbox,text,btn_create,lbl_error);
+        Button initiate=new Button("Initiate");
+        initiate.setOnAction(e->{initiate();
+            scene.setRoot(get_home_layout());});
+        initiate.setMaxWidth(Integer.MAX_VALUE);
+
+        login_layout.getChildren().addAll(hbox,text,btn_create,initiate,lbl_error);
         login_layout.setAlignment(Pos.TOP_CENTER);
         login_layout.getStyleClass().add("login_form");
         return(login_layout);
     }
+
+    private static void initiate() {
+        int dummy=initiationParameters.display();
+    }
+
     private static boolean login(String username){
         int index = userNameBinarySearch(allUsersName,0,allUsersName.size(),username);
         if(index == -1) return false;
@@ -331,8 +341,10 @@ public class Interface extends Application {
 //            new User("3omar3allam","Omar","Allam","male",LocalDate.of(1996,7,7));
 //            new User("mohamed","Mohamed","Abd El Salam","male",LocalDate.of(1995,5,1));
 //        }catch(Exception ignored){}
-        names_generator();
+        /*names_generator();
         friendship_initiator();
+        initGroups();
+        fillGroups();*/
        //  ReadFromFile();
 
         //ReadGroupFromFile();
@@ -347,7 +359,7 @@ public class Interface extends Application {
     private static void visit_group(Group group){
         scene.setRoot(new GroupPage(group).get_page_layout());
     }
-    private static void names_generator() {
+    /*private static void names_generator() {
         String line = null;
         ArrayList<String> male=new ArrayList<>(),female=new ArrayList<>();
         try {
@@ -406,4 +418,27 @@ public class Interface extends Application {
             }
         }
     }
+    private static void initGroups() throws Exception {
+        Random rand = new Random();
+        for(int i=0;i<500;i++)
+        {
+
+            int index=rand.nextInt(allUsersName.size());
+            Group g=new Group(("Group"+ Integer.toString(i)),allUsersName.get(index));
+        }
+    }
+    private static void fillGroups()
+    {
+        Random rand = new Random();
+        for(int i=0;i<allGroupsName.size();i++)
+        {
+            int noOfUsers = 50 + rand.nextInt(50);
+            for(int j=0;j<noOfUsers;j++)
+            {
+                int index=rand.nextInt(allUsersName.size());
+                allGroupsName.get(i).addMember(allUsersName.get(rand.nextInt(allUsersName.size())));
+            }
+        }
+    }*/
+
 }

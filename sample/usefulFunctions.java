@@ -47,6 +47,7 @@ public class usefulFunctions {
         else return userName_index(arr, mid + 1, end, username);
     }
 
+
     static int userIDBinarySearch(ArrayList<User> arr, int start, int end, int ID){
         if(start >= end) return -1;
         int mid = (start + end - 1)/2;
@@ -200,10 +201,63 @@ public class usefulFunctions {
 
 
 
-    public static void group_graph_search(User source, ObservableList<Group> matching_names, String name){
-        //we check the user's groups, then we check his friends' groups, then friends' of friends' groups, then the whole database
-        /*
+    public static void group_graph_search(User source, ObservableList<Group> matching_names,ArrayList<Integer> noFriendsInGroup, String name){
         int length=name.length();
+        ArrayList<Group> groupsArray1=new ArrayList<>();
+        ArrayList<Integer>mutualFriendsNo1=new ArrayList<>();
+        ArrayList<Group> groupsArray2=new ArrayList<>();
+        ArrayList<Integer>mutualFriendsNo2=new ArrayList<>();
+        for (Group group: source.getGroups())
+        {
+            if ((length <= group.getName().length() && group.getName().toLowerCase().substring(0, length).equals(name.toLowerCase())))
+            {
+                if (!groupsArray1.contains(group)&& !groupsArray2.contains(group))
+                {
+                    if(groupsArray1.isEmpty()) {
+                        groupsArray1.add(group);
+                        mutualFriendsNo1.add(getNoFriendsInGroup(source,group));
+                    }
+                    else{
+                        int index = source.getGroups().indexOf(group);
+                        int n=getNoFriendsInGroup(source,group);
+                        int addIndex=noBinarySearch(mutualFriendsNo1,0,mutualFriendsNo1.size(),n);
+                        if(addIndex==-1)addIndex=no_index(mutualFriendsNo1,0,mutualFriendsNo1.size(),n);
+                        groupsArray1.add(addIndex,group);
+                        mutualFriendsNo1.add(addIndex,n);
+                    }
+                }
+            }
+        }
+        for (Group group : allGroupsName) {
+            if ((length <= group.getName().length() && group.getName().toLowerCase().substring(0, length).equals(name.toLowerCase())))
+            {
+                if (!groupsArray1.contains(group)&& !groupsArray2.contains(group))
+                {
+                    if(groupsArray2.isEmpty()) {
+                        groupsArray2.add(group);
+                        mutualFriendsNo2.add(getNoFriendsInGroup(source,group));
+                    }
+                    else {
+                        int MutualFriendsNo=getNoFriendsInGroup(source,group);
+                        int addIndex=noBinarySearch(mutualFriendsNo2,0,mutualFriendsNo2.size(),MutualFriendsNo);
+                        if(addIndex==-1)addIndex=no_index(mutualFriendsNo2,0,mutualFriendsNo2.size(),MutualFriendsNo);
+                        groupsArray2.add(addIndex,group);
+                        mutualFriendsNo2.add(addIndex,MutualFriendsNo);
+                    }
+                }
+            }
+        }
+        Collections.reverse(groupsArray1);Collections.reverse(groupsArray2);
+        Collections.reverse(mutualFriendsNo1);Collections.reverse(mutualFriendsNo2);
+        matching_names.addAll(groupsArray1);
+        matching_names.addAll(groupsArray2);
+        noFriendsInGroup.addAll(mutualFriendsNo1);
+        noFriendsInGroup.addAll(mutualFriendsNo2);
+
+
+
+        //we check the user's groups, then we check his friends' groups, then friends' of friends' groups, then the whole database
+        /*int length=name.length();
         Queue<User> userQueue=new LinkedList<>(source.getFriends());
         Queue<Group> groupQueue=new LinkedList<>(source.getGroups());
         int size=groupQueue.size();
@@ -222,6 +276,14 @@ public class usefulFunctions {
         }*/
     }
 
+    public static int getNoFriendsInGroup(User user,Group group)
+    {
+        int number =0;
+        for(User u:user.getFriends())
+            if(group.getMembers().contains(u))number++;
+        return number;
+    }
+
     public static int MutualFriendsNo(User user1,User user2)
     {
         int number=0;
@@ -232,14 +294,15 @@ public class usefulFunctions {
 
     public static void InitMutualFriendsList(User user)
     {
-        ArrayList<User> friends=user.getFriends();
-        ArrayList<Integer> mutualFriendsCounter=new ArrayList<>();
-        for(User user2:friends)
-        {
-            int noMutualFriends=MutualFriendsNo(user,user2);
-            mutualFriendsCounter.add(noMutualFriends);
+        if(user != null) {
+            ArrayList<User> friends = user.getFriends();
+            ArrayList<Integer> mutualFriendsCounter = new ArrayList<>();
+            for (User user2 : friends) {
+                int noMutualFriends = MutualFriendsNo(user, user2);
+                mutualFriendsCounter.add(noMutualFriends);
+            }
+            user.setMutualFriendsNo(mutualFriendsCounter);
         }
-        user.setMutualFriendsNo(mutualFriendsCounter);
     }
 
 
@@ -255,32 +318,36 @@ public class usefulFunctions {
             temp=friendsArray.get(i).getFriends();
             for(User currentUser:temp)
             {
+                if(source.isFriend(currentUser))continue;
                 int id=currentUser.getID();
                 int index= userID_index(friendsOfFriends,0,friendsOfFriends.size(),id);
-                if(index==-1)
-                {
-                    int index2=userIDBinarySearch(friendsOfFriends,0,friendsOfFriends.size(),id);
-                    MutualFriendsNo.set(index2,MutualFriendsNo.get(index2)+1);//userID duplication (impossible)
-                }
-                else if(currentUser!=source)
-                {
-                    friendsOfFriends.add(index, currentUser);
-                    MutualFriendsNo.add(index,0);
+                if(currentUser != source) {
+                    if (index == -1)
+                    {
+                        int index2 = userIDBinarySearch(friendsOfFriends, 0, friendsOfFriends.size(), id);
+                        MutualFriendsNo.set(index2, MutualFriendsNo.get(index2) + 1);//userID duplication (impossible)
+                    }
+                    else {
+                        friendsOfFriends.add(index, currentUser);
+                        MutualFriendsNo.add(index, 1);
+                    }
                 }
             }
         }
         for(int i=0;i<30;i++)
         {
+            if(i>=friendsOfFriends.size()||i>=MutualFriendsNo.size())break;
             int max_index=0,max=0;
             for(int j=0;j<MutualFriendsNo.size();j++)
             {
                 if(MutualFriendsNo.get(j)>max)
                 {max=MutualFriendsNo.get(j); max_index=j;}
             }
-            recommended_friends.add(friendsOfFriends.get(max_index));
+            if(!(max_index>=friendsOfFriends.size()))
+            {recommended_friends.add(friendsOfFriends.get(max_index));
             mutual_friends.add(MutualFriendsNo.get(max_index));
             friendsOfFriends.remove(max_index);
-            MutualFriendsNo.remove(max_index);
+            MutualFriendsNo.remove(max_index);}
         }
 
     }
@@ -288,8 +355,47 @@ public class usefulFunctions {
 
     public static void get_groups_recommendations(User source, ArrayList<Group> recommended_groups, ArrayList<Integer> mutual_friends){
         //nafs el kalam b2a
-        recommended_groups.addAll(allGroupsName);
-        while(mutual_friends.size() < recommended_groups.size())mutual_friends.add(0);
+
+        ArrayList<User> friendsArray=new ArrayList<>();
+        ArrayList<Group> groupsArray=new ArrayList<>();
+        friendsArray=source.getFriends();
+        ArrayList<Group> groupsOfFriends=new ArrayList<>();
+        ArrayList<Integer>friendsInGroup=new ArrayList<>();
+        for(int i=0;i<friendsArray.size();i++)
+        {
+            LinkedList<Group> temp=new LinkedList<>();
+            temp=friendsArray.get(i).getGroups();
+            for(Group currentGroup:temp)
+            {
+                if(source.getGroups().contains(currentGroup))continue;
+                int id=currentGroup.getID();
+                int index= groupID_index(groupsOfFriends,0,groupsOfFriends.size(),id);
+                    if (index == -1)
+                    {
+                        int index2 = groupIDBinarySearch(groupsOfFriends, 0, groupsOfFriends.size(), id);
+                        friendsInGroup.set(index2, friendsInGroup.get(index2) + 1);//userID duplication (impossible)
+                    }
+                    else {
+                        groupsOfFriends.add(index, currentGroup);
+                        friendsInGroup.add(index, 1);
+                    }
+                }
+            }
+        for(int i=0;i<30;i++)
+        {
+            if(i>=friendsInGroup.size()||i>=groupsOfFriends.size())break;
+            int max_index=0,max=0;
+            for(int j=0;j<friendsInGroup.size();j++)
+            {
+                if(friendsInGroup.get(j)>max)
+                {max=friendsInGroup.get(j); max_index=j;}
+            }
+            if(!(max_index>=groupsOfFriends.size()))
+            {recommended_groups.add(groupsOfFriends.get(max_index));
+                mutual_friends.add(friendsInGroup.get(max_index));
+                groupsOfFriends.remove(max_index);
+                friendsInGroup.remove(max_index);}
+        }
     }
 
 

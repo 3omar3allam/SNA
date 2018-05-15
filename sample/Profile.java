@@ -156,7 +156,6 @@ class Profile extends Page {
                 btn_add_friend.setOnAction(e->{
                     try {
                         this.online_user.addFriendSpecial(user);
-
                     } catch (Exception ignored) {}
                     btn_add_friend.getScene().setRoot(new Profile(this.online_user,this).get_page_layout(user));
                 });
@@ -328,7 +327,9 @@ class Profile extends Page {
             }
             else {
                 lst_results_group.setVisible(true);
-                group_graph_search(this.online_user,matching_groups,newValue);
+
+                ArrayList<Integer> noFriendsInGroup=new ArrayList<>();
+                group_graph_search(this.online_user,matching_groups,noFriendsInGroup,newValue);
                 if(matching_groups.isEmpty()) lst_results_group.setVisible(false);
 
                 else lst_results_group.setCellFactory( e -> new ListCell<Group>(){

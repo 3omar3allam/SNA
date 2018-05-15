@@ -8,9 +8,8 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
-import static sample.usefulFunctions.MutualFriendsNo;
-import static sample.usefulFunctions.addToList;
-import static sample.usefulFunctions.name_index;
+import static sample.usefulFunctions.*;
+
 enum gender{male,female}
 
 public class User {
@@ -198,7 +197,7 @@ public class User {
             int index = name_index(Friends,0,Friends.size(),user);
             Friends.add(index,user);
             noFriends++;
-            index = name_index(user.Friends,0,user.Friends.size(),user);
+            index = name_index(user.Friends,0,user.Friends.size(),this);
             user.getFriends().add(index,this);
             user.setNoFriends(user.getNoFriends()+1);
             MutualFriendsNo.ensureCapacity(user.getNoFriends());
@@ -214,7 +213,7 @@ public class User {
             MutualFriendsNo.remove(index);
             noFriends--;
             index=user.getFriends().indexOf(this);
-            user.getMutualFriendsNo().remove(index);
+            //user.getMutualFriendsNo().remove(index);
             user.getFriends().remove(this);
             user.setNoFriends(user.getNoFriends()-1);
         }
@@ -288,7 +287,7 @@ public class User {
 
     public boolean isFriend(User user)
     {
-        return Friends.contains(user);
+        return userNameBinarySearch(Friends,0,Friends.size(),user.getUserName()) !=-1;
     }
 
     public void delete()
