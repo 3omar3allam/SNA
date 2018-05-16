@@ -1,7 +1,5 @@
 ## Commited changes: 
-
-1-You can Comment the  ReadFromFile();  ReadPost(); in line (331,332) in init_Lists function and WriteUsers(); WritePosts(); in line (77,78) in save function in interface file 
-2-You can unComment the  Name_Ganerator in line (330) in init_Lists function in interface and continue as you used to.
-3-I have changed the toString function in the User class.
-4-I have add on more function called addPost to the user class that take post as an argument you can find it in line (207).
-5-I have add on more constructor to the Post class that take post all post attributes as arguments you can find it in line (19).
+1- get the Json Jar from the following link :https://code.google.com/archive/p/json-simple/downloads
+2-you can follow the following tutorial : https://www.youtube.com/watch?v=LDzA17uruAo&t=2887s
+3-to include external jar in IntelliJ : https://stackoverflow.com/questions/1051640/correct-way-to-add-external-jars-lib-jar-to-an-intellij-idea-project
+4-when loading the files : Import the usersDatabase then The groups database then the Posts DataBase
