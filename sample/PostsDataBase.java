@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.Scanner;
 
 import static sample.Group.allGroupsID;
+import static sample.Interface.WritePath;
 import static sample.User.allUsersID;
 import static sample.User.allUsersName;
 import static sample.usefulFunctions.groupNameBinarySearch;
@@ -26,7 +27,8 @@ public class PostsDataBase {
     private static JSONArray Groups = new JSONArray();
     private static JSONArray PostsOFGroups = new JSONArray();
 
-    private static File file = new File("C:\\Users\\Ali Badawy\\Desktop\\Posts.json");
+    private static File file = new File(WritePath+"\\Posts.json");
+
 
     public static void WritePosts() {
         //add user name
@@ -101,9 +103,10 @@ public class PostsDataBase {
 
     }
 
-    public static void ReadPost() {
+    public static void ReadPost(String path) {
+        File postData = new File(path);
         try {
-            Scanner input = new Scanner(file);
+            Scanner input = new Scanner(postData);
             StringBuilder JSONin = new StringBuilder();
             while (input.hasNextLine()) {
                 JSONin.append(input.nextLine());

@@ -9,15 +9,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Random;
 
 import static sample.Group.*;
 import static sample.GroupDataBase.ReadGroupFromFile;
@@ -27,8 +26,15 @@ import static sample.PostsDataBase.WritePosts;
 import static sample.User.*;
 import static sample.UsersDataBase.ReadFromFile;
 import static sample.UsersDataBase.WriteUsers;
-import static sample.usefulFunctions.addToList;
+import static sample.usefulFunctions.InitMutualFriendsList;
 import static sample.usefulFunctions.userNameBinarySearch;
+
+//import static sample.GroupDataBase.ReadGroupFromFile;
+//import static sample.GroupDataBase.WriteGroup;
+//import static sample.PostsDataBase.ReadPost;
+//import static sample.PostsDataBase.WritePosts;
+//import static sample.UsersDataBase.ReadFromFile;
+//import static sample.UsersDataBase.WriteUsers;
 
 
 public class Interface extends Application {
@@ -39,6 +45,13 @@ public class Interface extends Application {
     private static BorderPane layout;
     private static Label lbl_users,lbl_groups;
     private static User current_user;
+    private static String userPath;
+    private static String groupPath;
+    private static String postPath;
+    public static String WritePath;
+
+
+
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -66,16 +79,62 @@ public class Interface extends Application {
 
     }
     private static void import_data() throws IOException {
-        /*
-        BufferedReader in = new BufferedReader(new FileReader(data));
-        String line;
-        while((line = in.readLine()) != null)  read(line);
-        */
+
+       FileChooser userFileChooser = new FileChooser();
+        userFileChooser.setTitle("Enter user file");
+        userFileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON Files","*.json"));
+       File userDataBase= userFileChooser.showOpenDialog(null);
+       if(userDataBase != null)
+       {
+        userPath = userDataBase.getAbsolutePath();
+          // System.out.println(userPath);
+           ReadFromFile(userPath);
+       }
+          else
+              {
+           System.out.println("file is not valid");
+       }
+        FileChooser groupFileChooser = new FileChooser();
+        groupFileChooser.setTitle("Enter group file");
+        groupFileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON Files","*.json"));
+        File groupDataBase= userFileChooser.showOpenDialog(null);
+        if(groupDataBase != null)
+        {
+            groupPath = groupDataBase.getAbsolutePath();
+            ReadGroupFromFile(groupPath);
+        }else{
+            System.out.println("file is not valid");
+        }
+        FileChooser postFileChooser = new FileChooser();
+        postFileChooser.setTitle("Enter posts file");
+        postFileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON Files","*.json"));
+        File postDataBase= userFileChooser.showOpenDialog(null);
+        if(postDataBase != null)
+        {
+            postPath = postDataBase.getAbsolutePath();
+            ReadPost(postPath);
+        }else{
+            System.out.println("file is not valid");
+        }
+
+
+
+
     }
     private static void read(String line){
         System.out.println(line);
     }
     private static void save(){
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        File selectedDirectory = directoryChooser.showDialog(null);
+
+        if(selectedDirectory == null){
+            //No Directory selected
+        }else{
+            WritePath = selectedDirectory.getAbsolutePath();
+            System.out.println(WritePath);
+        }
+
         System.out.println("saved");
         WriteUsers();
         WritePosts();
@@ -299,16 +358,27 @@ public class Interface extends Application {
         btn_create.setOnAction( e -> createAccount());
         btn_create.setMaxWidth(Integer.MAX_VALUE);
 
-        login_layout.getChildren().addAll(hbox,text,btn_create,lbl_error);
+        Button initiate=new Button("Initiate");
+        initiate.setOnAction(e->{initiate();
+            scene.setRoot(get_home_layout());});
+        initiate.setMaxWidth(Integer.MAX_VALUE);
+
+        login_layout.getChildren().addAll(hbox,text,btn_create,initiate,lbl_error);
         login_layout.setAlignment(Pos.TOP_CENTER);
         login_layout.getStyleClass().add("login_form");
         return(login_layout);
     }
+
+    private static void initiate() {
+        int dummy=initiationParameters.display();
+    }
+
     private static boolean login(String username){
         int index = userNameBinarySearch(allUsersName,0,allUsersName.size(),username);
         if(index == -1) return false;
         else {
             current_user = allUsersName.get(index);
+            InitMutualFriendsList(current_user);
             return true;
         }
     }
@@ -330,13 +400,17 @@ public class Interface extends Application {
 //            new User("3omar3allam","Omar","Allam","male",LocalDate.of(1996,7,7));
 //            new User("mohamed","Mohamed","Abd El Salam","male",LocalDate.of(1995,5,1));
 //        }catch(Exception ignored){}
-       // names_generator();
-         ReadFromFile();
+        /*names_generator();
+        friendship_initiator();
+        initGroups();
+        fillGroups();*/
+       //  ReadFromFile();
 
-        ReadGroupFromFile();
+        //ReadGroupFromFile();
 
-        ReadPost();
+      //  ReadPost();
     }
+
     private static void visit_profile(User profile){
         window.setMinWidth(800);
         scene.setRoot(new Profile(null).get_page_layout(profile));
@@ -344,20 +418,86 @@ public class Interface extends Application {
     private static void visit_group(Group group){
         scene.setRoot(new GroupPage(group).get_page_layout());
     }
-    private static void names_generator() {
-        Random rand = new Random();
-        for(int i = 0; i<100000;i++){
-            int numChar = 1 + rand.nextInt(5);
-            StringBuilder name_builder = new StringBuilder();
-            for (int j = 0; j<numChar; j++){
-                int c = 97 + rand.nextInt(25);
-                name_builder.append((char)c);
+    /*private static void names_generator() {
+        String line = null;
+        ArrayList<String> male=new ArrayList<>(),female=new ArrayList<>();
+        try {
+            FileReader fileReader = new FileReader("m.txt");
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+            while((line = bufferedReader.readLine()) != null) male.add(line);
+            bufferedReader.close();
+        }
+        catch(Exception e){}
+        try {
+            FileReader fileReader = new FileReader("f.txt");
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+            while((line = bufferedReader.readLine()) != null) {
+                female.add(line);
             }
-            String name = name_builder.toString();
+            bufferedReader.close();
+        }
+        catch (Exception e){}
+        for(int i = 0; i<1000;i++){
             try{
-                addToList(new User(name,name,name,"male",LocalDate.of(1996,7,7)));
+                Random rand = new Random();
+                int index = rand.nextInt(female.size());
+                int index2=rand.nextInt(male.size());
+                String fn,sn, gender;
+                if(i%2==0) {
+                    fn = male.get(index);
+                    gender="male";
+                }
+                else {fn = female.get(index); gender="female";}
+                sn=male.get(index2);
+                String userName=fn+sn;
+                int Index = userName_index(allUsersName,0,allUsersName.size(),userName);
+                while(Index==-1){userName+="1"; Index = userName_index(allUsersName,0,allUsersName.size(),userName);}
+                addToList(new User(userName,fn,sn,gender,LocalDate.of(1996,7,7)));
             }catch(Exception ignored){}
         }
         scene.setRoot(get_home_layout());
     }
+
+    private static void friendship_initiator() {
+        for(int i=0;i<allUsersName.size();i++)
+        {
+            User current=allUsersName.get(i);
+            Random rand = new Random();
+            int index = 5+rand.nextInt(95);
+            for(int j=0;j<index;j++)
+            {
+                Random r = new Random();
+                int Index = rand.nextInt(allUsersName.size());
+                User friend=allUsersName.get(Index);
+                try {
+                    current.addFriend(friend);
+                } catch (Exception e) {}
+            }
+        }
+    }
+    private static void initGroups() throws Exception {
+        Random rand = new Random();
+        for(int i=0;i<500;i++)
+        {
+
+            int index=rand.nextInt(allUsersName.size());
+            Group g=new Group(("Group"+ Integer.toString(i)),allUsersName.get(index));
+        }
+    }
+    private static void fillGroups()
+    {
+        Random rand = new Random();
+        for(int i=0;i<allGroupsName.size();i++)
+        {
+            int noOfUsers = 50 + rand.nextInt(50);
+            for(int j=0;j<noOfUsers;j++)
+            {
+                int index=rand.nextInt(allUsersName.size());
+                allGroupsName.get(i).addMember(allUsersName.get(rand.nextInt(allUsersName.size())));
+            }
+        }
+    }*/
+
 }

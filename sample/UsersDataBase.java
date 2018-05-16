@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.Scanner;
 
+import static sample.Interface.WritePath;
 import static sample.User.allUsersID;
 import static sample.User.allUsersName;
 import static sample.usefulFunctions.addToList;
@@ -22,7 +23,7 @@ public class UsersDataBase {
     private static JSONArray Users = new JSONArray();
     private static JSONArray readUsers = new JSONArray();
 
-    private static File file = new File("C:\\Users\\Ali Badawy\\Desktop\\Users.json");
+    private static File file = new File(WritePath+"\\Users.json");
 
 
     public static void WriteUsers() {
@@ -64,11 +65,12 @@ public class UsersDataBase {
 
     }
 
-    public static void ReadFromFile() {
+    public static void ReadFromFile(String path) {
+        File userData = new File(path);
 
         //System.out.println("reading");
         try {
-            Scanner input = new Scanner(file);
+            Scanner input = new Scanner(userData);
             StringBuilder JSONin = new StringBuilder();
             while (input.hasNextLine()) {
                 JSONin.append(input.nextLine());
@@ -105,16 +107,16 @@ public class UsersDataBase {
                 if ((allUsersID.get(i)).getUserName() == tempUser.get("User Name")){
                     //get friends array
                     JSONArray tempFriendsList= (JSONArray) tempUser.get("List Of Friends");
-                //for loop for all friends
-                for (int j = 0; j < tempFriendsList.size(); j++){
-                    String friendString = (String) tempFriendsList.get(j);
-                    //get the index of the friend
-                    int indexOfFriend=userNameBinarySearch(allUsersID,0,allUsersID.size(),friendString);
-                    //add friend
-                    allUsersID.get(i).addFriend(allUsersID.get(indexOfFriend));
-                 }
+                    //for loop for all friends
+                    for (int j = 0; j < tempFriendsList.size(); j++){
+                        String friendString = (String) tempFriendsList.get(j);
+                        //get the index of the friend
+                        int indexOfFriend=userNameBinarySearch(allUsersID,0,allUsersID.size(),friendString);
+                        //add friend
+                        allUsersID.get(i).addFriend(allUsersID.get(indexOfFriend));
+                    }
 
-            }
+                }
             }
 
 

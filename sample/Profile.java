@@ -5,6 +5,10 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 
 import java.time.LocalDate;
@@ -13,9 +17,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import static sample.Group.noGroups;
-import static sample.Interface.get_home_layout;
 import static sample.User.noUsers;
 import static sample.usefulFunctions.*;
+import static sample.Interface.*;
+import static sample.GroupPage.*;
 
 class Profile extends Page {
     private User online_user;
@@ -23,10 +28,12 @@ class Profile extends Page {
 
     Profile(User online_user){
         this.online_user = online_user;
+        InitMutualFriendsList(online_user);
         this.calling_page = null;
     }
     Profile(User online_user, Page calling_page){
         this.online_user = online_user;
+        InitMutualFriendsList(online_user);
         this.calling_page = calling_page;
     }
     BorderPane get_page_layout(){
@@ -148,7 +155,7 @@ class Profile extends Page {
                 Button btn_add_friend = new Button("Add Friend");
                 btn_add_friend.setOnAction(e->{
                     try {
-                        this.online_user.addFriend(user);
+                        this.online_user.addFriendSpecial(user);
                     } catch (Exception ignored) {}
                     btn_add_friend.getScene().setRoot(new Profile(this.online_user,this).get_page_layout(user));
                 });
@@ -189,7 +196,7 @@ class Profile extends Page {
         else{
             Hyperlink lnk_like = new Hyperlink("Like");
             lnk_like.getStyleClass().add("post_link");
-            if(post.getLikers().contains(this.online_user)) lnk_like.setText("Unlike");
+            if(post.getLikers().contains(user)) lnk_like.setText("Unlike");
             lnk_like.setOnAction(e->{
                 if(lnk_like.getText().equals("Like")){
                     this.online_user.likePost(post);
@@ -286,7 +293,8 @@ class Profile extends Page {
             }
             else {
                 lst_results_user.setVisible(true);
-                user_graph_search(this.online_user,matching_names,newValue);
+                ArrayList<Integer> mutualFriends=new ArrayList<>();
+                user_graph_search(this.online_user,matching_names,mutualFriends,newValue);
 
                 if(matching_names.isEmpty())lst_results_user.setVisible(false);
                 else {
@@ -319,7 +327,9 @@ class Profile extends Page {
             }
             else {
                 lst_results_group.setVisible(true);
-                group_graph_search(this.online_user,matching_groups,newValue);
+
+                ArrayList<Integer> noFriendsInGroup=new ArrayList<>();
+                group_graph_search(this.online_user,matching_groups,noFriendsInGroup,newValue);
                 if(matching_groups.isEmpty()) lst_results_group.setVisible(false);
 
                 else lst_results_group.setCellFactory( e -> new ListCell<Group>(){

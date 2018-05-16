@@ -57,7 +57,9 @@ public class GroupPage extends Page {
         Label lbl_title = new Label("Social-Networks");
         lbl_title.setStyle("-fx-text-fill: aliceblue;    -fx-font-size: 20;    -fx-font-weight: bold;");
 
-        Hyperlink lnk_profile = new Hyperlink(this.online_user.getFirstName().toUpperCase());
+        Hyperlink lnk_profile = new Hyperlink();
+        if(this.online_user!=null)lnk_profile.setText(this.online_user.getFirstName().toUpperCase());
+        else lnk_profile.setVisible(false);
         lnk_profile.getStyleClass().add("headerlink");
         lnk_profile.setOnAction(e ->lnk_profile.getScene().setRoot(calling_page.get_page_layout(this.online_user)));
 
@@ -136,28 +138,30 @@ public class GroupPage extends Page {
         lst_posts.setItems(array_of_posts);
 
 
-            TextArea txt_new_post = new TextArea();
-            txt_new_post.getStyleClass().add("new_post");
-            txt_new_post.setPromptText(String.format("What's on your mind, %s?" ,this.online_user.getFirstName()));
+        TextArea txt_new_post = new TextArea();
+        txt_new_post.getStyleClass().add("new_post");
+        if(online_user!=null)
+        txt_new_post.setPromptText(String.format("What's on your mind, %s?" ,this.online_user.getFirstName()));
+        else txt_new_post.setPromptText("What's on your mind?");
 
-            AnchorPane buttons = new AnchorPane();
-            Button btn_post = new Button("Post");
-            btn_post.setStyle("-fx-background-color: darkslateblue; -fx-text-fill: white; -fx-min-width: 70px");
-            Button btn_clear = new Button("Clear");
-            btn_clear.setStyle("-fx-background-color: lightgray; -fx-text-fill: black; -fx-min-width: 70px");
-            btn_post.setOnAction(e -> {
-                Post post = group.addPost(txt_new_post.getText(),this.online_user);
-                array_of_posts.add(0, list_item(post,array_of_posts));
-                txt_new_post.clear();
-            });
-            btn_clear.setOnAction(e -> txt_new_post.clear());
-            AnchorPane.setTopAnchor(btn_clear, 0.0);
-            AnchorPane.setLeftAnchor(btn_clear, 0.0);
-            AnchorPane.setTopAnchor(btn_post, 0.0);
-            AnchorPane.setRightAnchor(btn_post, 0.0);
-            buttons.getChildren().addAll(btn_clear, btn_post);
+                AnchorPane buttons = new AnchorPane();
+        Button btn_post = new Button("Post");
+        btn_post.setStyle("-fx-background-color: darkslateblue; -fx-text-fill: white; -fx-min-width: 70px");
+        Button btn_clear = new Button("Clear");
+        btn_clear.setStyle("-fx-background-color: lightgray; -fx-text-fill: black; -fx-min-width: 70px");
+        btn_post.setOnAction(e -> {
+            Post post = group.addPost(txt_new_post.getText(),this.online_user);
+            array_of_posts.add(0, list_item(post,array_of_posts));
+            txt_new_post.clear();
+        });
+        btn_clear.setOnAction(e -> txt_new_post.clear());
+        AnchorPane.setTopAnchor(btn_clear, 0.0);
+        AnchorPane.setLeftAnchor(btn_clear, 0.0);
+        AnchorPane.setTopAnchor(btn_post, 0.0);
+        AnchorPane.setRightAnchor(btn_post, 0.0);
+        buttons.getChildren().addAll(btn_clear, btn_post);
 
-            timeline.getChildren().addAll(txt_new_post, buttons, lst_posts);
+        timeline.getChildren().addAll(txt_new_post, buttons, lst_posts);
 
 
         HBox.setHgrow(timeline, Priority.ALWAYS);
@@ -311,49 +315,51 @@ public class GroupPage extends Page {
         friends_container.setHgap(15);
         friends_container.getStyleClass().add("friends_container");
 
-        Label lbl_friends = new Label();
-        lbl_friends.setText("Invite Friends");
-        lbl_friends.setStyle("-fx-font-weight: bold; -fx-font-size: 15;");
-        friends_container.add(lbl_friends,0,0);
-        if(this.online_user.getNoFriends() != 0) {
-            String[] colors = {"grey","lightblue"};
-            ObservableList<Hyperlink> ov_friends = FXCollections.observableArrayList();
-            int index = 0;
-            boolean allFriendsAreIn=true ;
-            for (User friend : this.online_user.getFriends()) {
-                if(!group.isMember(friend)) {
-                    allFriendsAreIn=false;
-                    Hyperlink link = new Hyperlink(friend.getName());
-                    String color = colors[index % 2];
-                    link.getStyleClass().add("friend_in_list");
-                    link.setStyle(String.format("-fx-background-color: %s;", color));
-                    link.setOnAction(e -> {group.addMember(friend);link.getScene().setRoot(get_page_layout(online_user));});
-                    ov_friends.add(link);
-                    index++;
+        if(online_user!=null) {
+            Label lbl_friends = new Label();
+            lbl_friends.setText("Invite Friends");
+            lbl_friends.setStyle("-fx-font-weight: bold; -fx-font-size: 15;");
+            friends_container.add(lbl_friends, 0, 0);
+            if (this.online_user.getNoFriends() != 0) {
+                String[] colors = {"grey", "lightblue"};
+                ObservableList<Hyperlink> ov_friends = FXCollections.observableArrayList();
+                int index = 0;
+                boolean allFriendsAreIn = true;
+                for (User friend : this.online_user.getFriends()) {
+                    if (!group.isMember(friend)) {
+                        allFriendsAreIn = false;
+                        Hyperlink link = new Hyperlink(friend.getName());
+                        String color = colors[index % 2];
+                        link.getStyleClass().add("friend_in_list");
+                        link.setStyle(String.format("-fx-background-color: %s;", color));
+                        link.setOnAction(e -> {
+                            group.addMember(friend);
+                            link.getScene().setRoot(get_page_layout(online_user));
+                        });
+                        ov_friends.add(link);
+                        index++;
+                    }
                 }
-            }
-            if(allFriendsAreIn)
-            {
+                if (allFriendsAreIn) {
+                    Label lbl_null_friends = new Label();
+                    lbl_null_friends.setText("All your friends are already members ");
+                    lbl_null_friends.setStyle("-fx-alignment: center;-fx-font-weight: bold");
+                    friends_container.add(lbl_null_friends, 0, 2, 2, 1);
+                } else {
+                    ListView<Hyperlink> lst_friends = new ListView<>();
+                    lst_friends.getStyleClass().add("friends");
+                    lst_friends.setOrientation(Orientation.HORIZONTAL);
+                    lst_friends.setItems(ov_friends);
+                    friends_container.add(lst_friends, 0, 1, 2, 1);
+                }
+            } else {
                 Label lbl_null_friends = new Label();
-                lbl_null_friends.setText("All your friends are already members ");
+                lbl_null_friends.setText("you have no friends ");
                 lbl_null_friends.setStyle("-fx-alignment: center;-fx-font-weight: bold");
-                friends_container.add(lbl_null_friends,0,2,2,1);
+                friends_container.add(lbl_null_friends, 0, 2, 2, 1);
             }
-            else {
-                ListView<Hyperlink> lst_friends = new ListView<>();
-                lst_friends.getStyleClass().add("friends");
-                lst_friends.setOrientation(Orientation.HORIZONTAL);
-                lst_friends.setItems(ov_friends);
-                friends_container.add(lst_friends, 0, 1, 2, 1);
-            }
+            container.getChildren().add(friends_container);
         }
-        else{
-            Label lbl_null_friends = new Label();
-            lbl_null_friends.setText("you have no friends ");
-            lbl_null_friends.setStyle("-fx-alignment: center;-fx-font-weight: bold");
-            friends_container.add(lbl_null_friends,0,2,2,1);
-        }
-        container.getChildren().add(friends_container);
         /////////////////////////////////////////////////////////////////
         GridPane search_layout = new GridPane();
         search_layout.setVgap(10);

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import static sample.Group.allGroupsID;
+import static sample.Interface.WritePath;
 import static sample.User.allUsersID;
 import static sample.usefulFunctions.addToList;
 import static sample.usefulFunctions.userNameBinarySearch;
@@ -20,7 +21,7 @@ public class GroupDataBase {
     private static JSONObject Root = new JSONObject();
     private static JSONArray Groups = new JSONArray();
 
-    private static File file = new File("C:\\Users\\Ali Badawy\\Desktop\\Groups.json");
+    private static File file = new File(WritePath+"\\Group.json");
 
     public static void WriteGroup() {
         //add Group
@@ -52,9 +53,11 @@ public class GroupDataBase {
             System.out.print(e.toString());
         }
     }
-     public static void ReadGroupFromFile(){
+     public static void ReadGroupFromFile(String path){
+         File groupData = new File(path);
+
          try {
-             Scanner input = new Scanner(file);
+             Scanner input = new Scanner(groupData);
              StringBuilder JSONin = new StringBuilder();
              while (input.hasNextLine()) {
                  JSONin.append(input.nextLine());
