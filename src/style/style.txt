@@ -1,0 +1,206 @@
+.header{
+    -fx-background-color: linear-gradient(blue,lightblue);
+    -fx-padding: 10 20;
+}
+.headerlink{
+    -fx-text-fill: lightgray;
+    -fx-border-width: 0;
+    -fx-font-size: 12;
+    -fx-font-weight: bold;
+    -fx-padding: 5;
+}
+.headerlink:hover{
+    -fx-background-color: aliceblue;
+    -fx-background-radius: 5;
+    -fx-text-fill: navy;
+    -fx-underline: false;
+}
+.headerlink:armed{
+    -fx-background-color: lightgray;
+    -fx-background-radius: 5;
+    -fx-text-fill: navy;
+    -fx-underline: false;
+}
+.headerlink:visited{
+    -fx-underline: false;
+}
+.login_form{
+    -fx-padding: 30px 25px;
+}
+.login_field{
+    -fx-alignment: center
+}
+.login_error_field{
+    -fx-border-color: red;
+    -fx-alignment: center;
+    -fx-border-radius: 3;
+}
+.search_form {
+    -fx-padding: 30px 25px;
+    -fx-alignment: top-center;
+    -fx-max-width: 350;
+}
+.registration_form{
+    -fx-background-color: linear-gradient(navy,blue,lightseagreen,lightblue,aliceblue);
+    -fx-alignment: center;
+    -fx-padding: 30px 25px;
+}
+.error_registration_radio > .radio{
+    -fx-background-color: palevioletred;
+}
+.error_registration_cbox{
+    -fx-background-color: palevioletred;
+}
+.error_registration_text{
+    -fx-background-color: palevioletred;
+}
+.registration_error_label{
+    -fx-padding: 30;
+    -fx-text-fill: darkred;
+    -fx-font-weight: bold;
+}
+.link_delete_account{
+    -fx-text-fill: red;
+    -fx-underline: false;
+    -fx-font-weight: bold;
+}
+.link_delete_account:armed{
+    -fx-border-width: 0;
+    -fx-text-fill: darkred;
+    -fx-underline: false;
+}
+.link_delete_account:visited{
+    -fx-border-width: 0;
+}
+.new_post{
+    -fx-border-width: 2;
+    -fx-padding: 15px;
+    -fx-text-alignment: left;
+    -fx-fill: dimgrey;
+    -fx-min-width: 200px;
+    -fx-max-height: 150px;
+}
+.timeline{
+    -fx-padding: 15px 20px;
+    -fx-min-width: 450;
+}
+.timeline_for_non_users{
+    -fx-padding: 15px 20px;
+    -fx-min-width: 0px;
+}
+.list_of_posts {
+    -fx-padding: 0px ;
+    -fx-background-color: transparent ;
+}
+.list_of_posts .list-cell {
+    -fx-padding: 5px ;
+    -fx-background-color: transparent, -fx-background ;
+    -fx-background-insets: 2px, 2px ;
+}
+.list_of_posts .list-cell:empty {
+    -fx-padding: 2px ;
+    -fx-background-color: transparent ;
+    -fx-background-insets: 0 ;
+}
+.post_link{
+    -fx-underline: false;
+    -fx-text-fill: blue;
+}
+.post_link:armed{
+    -fx-underline: false;
+    -fx-font-weight: bold;
+    -fx-border-width: 0px;
+    -fx-text-fill: blue;
+}
+.post_link:visited{
+    -fx-underline: false;
+    -fx-border-width: 0px;
+    -fx-text-fill: blue;
+}
+.profile_name{
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: navy;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-padding: 5;
+}
+.group_registration_form{
+    -fx-background-color: linear-gradient(navy,blue,lightseagreen,lightseagreen,lightblue,aliceblue);
+    -fx-alignment: center;
+    -fx-padding: 30px 25px;
+}
+.group_registration_error_label{
+    -fx-text-fill: darkred;
+    -fx-font-weight: bold;
+}
+.chbox_friends{
+    -fx-min-height: 10px;
+    -fx-max-height: 150px;
+    -fx-background-color: transparent;
+    -fx-text-fill: black;
+    -fx-font-weight: 800;
+    -fx-font-size: 1.2em;
+}
+.chbox_friends .list-cell{
+    -fx-background-color: transparent;
+    -fx-background-insets: 2px 2px;
+}
+.chbox_friends .list-cell:empty{
+    -fx-background-color: transparent;
+    -fx-background-insets: 0px 0px;
+}
+
+.friends_container{
+    -fx-background-color: white;
+    -fx-background-radius: 3px;
+    -fx-border-width: 1px;
+    -fx-border-radius: 3px;
+    -fx-border-color: black;
+    -fx-min-width: 400px;
+    -fx-max-width: 400px;
+    -fx-min-height: 110;
+    -fx-max-height: 150;
+    -fx-padding: 5px;
+}
+.friends{
+    -fx-min-width: 390px ;
+    -fx-max-width: 390px;
+    -fx-min-height: 70px;
+    -fx-max-height: 70px;
+    -fx-background-color: white;
+
+}
+.friends .list-cell{
+    -fx-background-color: transparent;
+    -fx-background-insets: 0px;
+    -fx-padding: 0px 2px;
+}
+.friends .list-cell:empty{
+    -fx-background-color: transparent;
+    -fx-background-insets: 0px;
+    -fx-padding: 0px;
+}
+.friend_in_list{
+    -fx-min-height: 50;
+    -fx-max-height: 50;
+    -fx-min-width: 40;
+    -fx-background-radius: 5px;
+    -fx-underline: false;
+    -fx-text-fill: black;
+    -fx-text-alignment: center;
+}
+
+.friend_in_list:hover{
+    -fx-background-color: whitesmoke;
+    -fx-underline: false;
+}
+.friend_in_list:armed{
+    -fx-background-color: dimgrey;
+    -fx-underline: false;
+    -fx-border-width: 0;
+}
+.friend_in_list:visited{
+    -fx-underline: false;
+    -fx-border-width: 0;
+}
